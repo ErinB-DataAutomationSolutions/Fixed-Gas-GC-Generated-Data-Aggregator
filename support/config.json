@@ -9,11 +9,11 @@
     "tm",
     "operator_nm",
     "method_nm",
-    "CO_µL",
-    "H2_µL",
-    "O2_µL",
-    "N2_µL",
-    "CH4_µL",
-    "CO_µL"
+    "CO_micro_L",
+    "H2_micro_L",
+    "O2_micro_L",
+    "N2_micro_L",
+    "CH4_micro_L",
+    "CO_micro_L"
   ]
 }
