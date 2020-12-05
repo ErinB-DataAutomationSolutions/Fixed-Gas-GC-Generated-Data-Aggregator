@@ -1,5 +1,19 @@
 {
   "data_dir": "Data_Directories",
   "report_name": "REPORT01",
-  "report_ext": "xls"
+  "report_ext": "xls",
+  "data_columns":
+  [
+    "sample_name",
+    "dt",
+    "tm",
+    "operator_nm",
+    "method_nm",
+    "CO_µL",
+    "H2_µL",
+    "O2_µL",
+    "N2_µL",
+    "CH4_µL",
+    "CO_µL"
+  ]
 }
