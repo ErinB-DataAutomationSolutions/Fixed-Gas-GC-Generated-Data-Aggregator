@@ -43,11 +43,14 @@ data_dir = f"{curr_dir}\\{config['data_dir']}"
 report_file_name = config["report_name"]
 report_ext = config["report_ext"]
 report_file = f"{report_file_name}.{report_ext}"
+data_columns = config["data_columns"]
+print(data_columns)
 
 # STEP : Get all immediate child directories
 child_dirs = os.listdir(f"{data_dir}")
 
 # STEP : Create Empty Master DataFrame
+
 pass
 
 # STEP : Access each directory
@@ -61,6 +64,7 @@ for child_dir in child_dirs:
 # STEP : Get run info data
     run_info_df = file.parse(sheet_name="Sheet1", skiprows=1)
     # A) Extract run info from run_info_df
+    # print(run_info_df)
     pass
 
     # B) Transpose data
@@ -71,4 +75,5 @@ for child_dir in child_dirs:
 
 # STEP : Get compound data
     compound_df = file.parse(sheet_name="Compound")
+    # print(compound_df)
     pass
