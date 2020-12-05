@@ -20,8 +20,7 @@
   "data_columns":
   [
     "sample_name",
-    "dt",
-    "tm",
+    "dt_tm",
     "operator_nm",
     "method_nm",
     "CO_micro_L",
