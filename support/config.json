@@ -15,12 +15,7 @@
     [
       "Name",
       "Amount"
-    ],
-    "test_sheet": {
-      "data1": "col1",
-      "data2": "col2",
-      "data3": "col3"
-    }
+    ]
   },
   "data_columns":
   [
