@@ -13,17 +13,16 @@
       ],
     "Compound":
     [
-      "Name",
       "Amount"
     ]
   },
   "data_columns":
   [
-    "sample_name",
+    "sample_nm",
     "dt_tm",
     "operator_nm",
     "method_nm",
-    "CO_micro_L",
+    "CO2_micro_L",
     "H2_micro_L",
     "O2_micro_L",
     "N2_micro_L",
