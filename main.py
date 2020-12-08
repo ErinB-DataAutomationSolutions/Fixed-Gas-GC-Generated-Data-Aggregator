@@ -21,7 +21,7 @@
 #   )   Create pandas ExcelFile object
 #   )   For each required sheet
 #   )       Create temp_data_df DataFrame from sheet
-#   )       Remove all but data specified in sheet dictionary
+#   )       Extract specific data slice from DataFrame
 #   )       Append data to master table
 #
 ########################################################################################################################
@@ -56,18 +56,22 @@ child_dirs = os.listdir(f"{data_dir_path}")
 # STEP : Create Empty Master DataFrame
 export_data_df = pd.DataFrame(columns=data_columns)
 
-print(export_data_df)
+for key in data_sheets:
+    sheet_cols = data_sheets
+    print(sheet_cols[key])
 
 # STEP : Access each directory
 for child_dir in child_dirs:
-    file_name = f"{data_dir_path}\\{child_dir}\\{report_file}"  # Create file name
+    # file_name = f"{data_dir_path}\\{child_dir}\\{report_file}"  # Create file name
+    pass
 
 # STEP : Create Excel File Object
-    file = pd.ExcelFile(file_name)
+    # file = pd.ExcelFile(file_name)
 
 # STEP : Extract data per sheet
     for key in data_sheets:
-        sheet_cols = data_sheets[key]               # Get list of req columns in sheet
-        sheet_data_df = file.parse(sheet_name=key)   # Store sheet data in DataFrame
+        # sheet_cols = data_sheets[key]               # Get list of req columns in sheet
+        # sheet_data_df = file.parse(sheet_name=key)   # Store sheet data in DataFrame
+        pass
 
 # STEP :
