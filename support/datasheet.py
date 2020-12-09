@@ -6,7 +6,7 @@ import json as js
 class Config:
     def __init__(self, file_name: str):
         # Import Config File
-        with open("config.json") as config_file:
+        with open(file_name) as config_file:
             config = js.load(config_file)
 
         # Set Data Directory
