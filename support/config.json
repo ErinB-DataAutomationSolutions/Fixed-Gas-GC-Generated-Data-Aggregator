@@ -38,7 +38,7 @@
         "Amount"
       ],
       "filter_rows": [],
-      "index_col": "Name",
+      "index_cols": "Name",
       "col_data_map": {},
       "row_data_map":
       {

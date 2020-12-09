@@ -15,34 +15,43 @@ class Config:
         # Set Report Name
         self.report_name = config["report_name"]
 
+        # Set report extension
+        self.report_ext = config["report_ext"]
+
+        # Set file name
+        self.file_name = f"{self.report_name}.{self.report_ext}"
+
         # If specified data sheets are listed, get data sheets
         if "data_sheets" in config:
-            pass
-        pass
+            self.data_sheets = config["data_sheets"]
 
 
 # Class housing data sheet info
 class DataSheet:
-    def __init__(self, name: str, sheet_dict: dict):
+    def __init__(self, name: str, file, sheet_dict: dict):
         self.name = name
         self.sheet_dict = sheet_dict
-        pass
+        self.file = file
 
-    def print_sheet_dict(self):
-        print(self.sheet_dict)
-        pass
+        # If data filter columns if specified
+        if "filter_cols" in sheet_dict:
+            self.filter_cols = sheet_dict["filter_cols"]
 
-    def get_filter_cols(self):
-        pass
+        # Get data filter rows if specified
+        if "filter_rows" in sheet_dict:
+            self.filter_rows = sheet_dict["filter_rows"]
 
-    def get_filter_rows(self):
-        pass
+        # Get index column if specified
+        if "index_col" in sheet_dict:
+            self.index_col = sheet_dict
 
-    def get_index_col(self):
-        pass
+        # Get column data map if specified
+        if "col_data_map" in sheet_dict:
+            self.col_data_map = sheet_dict["col_data_map"]
 
-    def get_col_data_map(self):
-        pass
+        # Get row data map if specified
+        if "row_data_map" in sheet_dict:
+            self.row_data_map = sheet_dict["row_data_map"]
 
-    def get_row_data_map(self):
-        pass
+    def import_data(self):
+        return self.file.parse(sheet_name=self.name)
