@@ -16,7 +16,7 @@ import unittest as ut
 from support.datasheet import Config
 
 # Set Test Variables
-config_file = "support\\config.json"    # Set filename
+config_file = "config_files\\config_default.json"    # Set filename
 test_data_dir = "Data_Directories"
 test_report_ext = "xls"
 
@@ -25,4 +25,3 @@ config = Config(config_file)            # Set config object
 
 if __name__ == '__main__':
     ut.main()
-    pass

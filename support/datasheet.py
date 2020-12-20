@@ -4,10 +4,14 @@ import json as js
 
 # Config class
 class Config:
-    def __init__(self, file_name: str):
-        # Import Config File
-        with open(file_name) as config_file:
-            self.config = js.load(config_file)
+
+    def __init__(self, file_name):
+        self.data_file_name = file_name
+
+    @property
+    def config(self):
+        with open(self.data_file_name) as config_file:
+            return js.load(config_file)
 
     @property
     def data_dir(self):
@@ -25,11 +29,10 @@ class Config:
 
     # Set file name
     @property
-    def file_name(self):
+    def full_file_name(self):
         return f"{self.report_name}.{self.report_ext}"
 
     # If specified data sheets are listed, get data sheets
-    @property
     def data_sheets(self):
         if "data_sheets" in self.config:
             return self.config["data_sheets"]
@@ -42,25 +45,35 @@ class DataSheet:
         self.sheet_dict = sheet_dict
         self.file = file
 
-        # If data filter columns if specified
-        if "filter_cols" in sheet_dict:
-            self.filter_cols = sheet_dict["filter_cols"]
+    # If data filter columns if specified
+    @property
+    def filter_cols(self):
+        if "filter_cols" in self.sheet_dict:
+            return self.sheet_dict["filter_cols"]
 
-        # Get data filter rows if specified
-        if "filter_rows" in sheet_dict:
-            self.filter_rows = sheet_dict["filter_rows"]
+    # Get data filter rows if specified
+    @property
+    def filter_rows(self):
+        if "filter_rows" in self.sheet_dict:
+            return self.sheet_dict["filter_rows"]
 
-        # Get index column if specified
-        if "index_col" in sheet_dict:
-            self.index_col = sheet_dict
+    # Get index column if specified
+    @property
+    def index_cols(self):
+        if "index_col" in self.sheet_dict:
+            return self.sheet_dict
 
-        # Get column data map if specified
-        if "col_data_map" in sheet_dict:
-            self.col_data_map = sheet_dict["col_data_map"]
+    # Get column data map if specified
+    @property
+    def col_data_map(self):
+        if "col_data_map" in self.sheet_dict:
+            return self.sheet_dict["col_data_map"]
 
-        # Get row data map if specified
-        if "row_data_map" in sheet_dict:
-            self.row_data_map = sheet_dict["row_data_map"]
+    # Get row data map if specified
+    @property
+    def row_data_map(self):
+        if "row_data_map" in self.sheet_dict:
+            return self.sheet_dict["row_data_map"]
 
     def import_data(self):
         return self.file.parse(sheet_name=self.name)

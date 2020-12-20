@@ -8,7 +8,7 @@
 #
 #   PROGRAM STEPS
 #   ) Set Current path
-#   ) Import the following from config.json:
+#   ) Import the following from config_default.json:
 #       - data_dir:     Directory housing generated child-directories
 #       - report_name:  File name of generated report
 #       - report_ext:   File extension of generated report
@@ -35,8 +35,9 @@ import pandas as pd
 # Get current dir
 curr_dir = os.curdir
 
+# IMPORT AND METADATA ASSIGNMENT WILL BE HANDLED BY CONFIG CLASS
 # Import CONFIG Details
-with open("support/config.json") as config_file:
+with open("config_files/config_default.json") as config_file:
     config = js.load(config_file)
 
 # Assign data directory and report name values

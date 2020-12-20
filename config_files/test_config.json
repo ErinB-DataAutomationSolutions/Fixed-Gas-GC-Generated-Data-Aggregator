@@ -2,46 +2,34 @@
   "data_dir": "Data_Directories",
   "report_name": "REPORT01",
   "report_ext": "xls",
-  "data_sheets":
-  {
-    "Sheet1":
-    [
-      "AcqMeth",
-      "AcqOp",
-      "InjDateTime",
-      "SampleName"
-      ],
-    "Compound":
-    [
-      "Amount"
-    ]
-  },
-  "data_columns":
-  [
-    "sample_nm",
-    "dt_tm",
-    "operator_nm",
-    "method_nm",
-    "CO2_micro_L",
-    "H2_micro_L",
-    "O2_micro_L",
-    "N2_micro_L",
-    "CH4_micro_L",
-    "CO_micro_L"
-  ],
-  "data_sheets_test":
-  {
-    "Compound": {
-      "filter_cols":
+  "data_sheets_test": {
+    "Sheet1": {
+      "filter_cols": [],
+      "filter_rows": [],
+      "index_cols":
       [
+        "AcqMeth",
+        "AcqOp",
+        "InjDateTime",
+        "SampleName"
+      ],
+      "col_data_map": {},
+      "row_data_map": {
+        "AcqMeth" : "method_nm",
+        "AcqOp": "operator_nm",
+        "InjDateTime": "dt_tm",
+        "SampleName": "sample_nm"
+      }
+    },
+    "Compound": {
+      "filter_cols": [
         "Name",
         "Amount"
       ],
       "filter_rows": [],
       "index_cols": "Name",
       "col_data_map": {},
-      "row_data_map":
-      {
+      "row_data_map": {
         "CARBON DIOXIDE": "CO2_micro_L",
         "HYDROGEN": "H2_micro_L",
         "OXYGEN": "O2_micro_L",
