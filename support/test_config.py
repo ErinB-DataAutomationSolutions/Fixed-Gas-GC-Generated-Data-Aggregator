@@ -7,13 +7,13 @@
 #   DATE LAST MODIFIED: 12/20/2020
 #
 #   DESCRIPTION:
-#       This file is used to test the Config class in library file datasheet.py
+#       This file is used to test the Config class in library file data_upload.py
 #
 ########################################################################################################################
 
 # IMPORTS
 import unittest as ut
-from support.datasheet import Config
+from support.data_upload import Config
 
 # Set Test Variables
 config_file = "config_files\\config_default.json"    # Set filename
