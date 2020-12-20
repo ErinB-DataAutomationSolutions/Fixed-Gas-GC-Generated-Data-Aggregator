@@ -1,0 +1,4 @@
+# DO NOT TRACK CONTENT OF THESE FOLDERS
+Data_Directories/
+support/__pycache__/
+.idea/
