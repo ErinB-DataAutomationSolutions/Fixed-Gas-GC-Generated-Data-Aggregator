@@ -16,7 +16,7 @@ import unittest as ut
 from support.data_upload import Config
 
 # Set Test Variables
-config_file = "config_files\\config_default.json"    # Set filename
+config_file = "config_files\\test_config.json"    # Set filename
 test_data_dir = "Data_Directories"
 test_report_ext = "xls"
 
