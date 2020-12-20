@@ -7,23 +7,32 @@ class Config:
     def __init__(self, file_name: str):
         # Import Config File
         with open(file_name) as config_file:
-            config = js.load(config_file)
+            self.config = js.load(config_file)
 
-        # Set Data Directory
-        self.data_dir = config["data_dir"]
+    @property
+    def data_dir(self):
+        return self.config["data_dir"]
 
-        # Set Report Name
-        self.report_name = config["report_name"]
+    # Set Report Name
+    @property
+    def report_name(self):
+        return self.config["report_name"]
 
-        # Set report extension
-        self.report_ext = config["report_ext"]
+    # Set Report Extension
+    @property
+    def report_ext(self):
+        return self.config["report_ext"]
 
-        # Set file name
-        self.file_name = f"{self.report_name}.{self.report_ext}"
+    # Set file name
+    @property
+    def file_name(self):
+        return f"{self.report_name}.{self.report_ext}"
 
-        # If specified data sheets are listed, get data sheets
-        if "data_sheets" in config:
-            self.data_sheets = config["data_sheets"]
+    # If specified data sheets are listed, get data sheets
+    @property
+    def data_sheets(self):
+        if "data_sheets" in self.config:
+            return self.config["data_sheets"]
 
 
 # Class housing data sheet info
