@@ -28,27 +28,5 @@
     "N2_micro_L",
     "CH4_micro_L",
     "CO_micro_L"
-  ],
-  "data_sheets_test":
-  {
-    "Compound": {
-      "filter_cols":
-      [
-        "Name",
-        "Amount"
-      ],
-      "filter_rows": [],
-      "index_cols": "Name",
-      "col_data_map": {},
-      "row_data_map":
-      {
-        "CARBON DIOXIDE": "CO2_micro_L",
-        "HYDROGEN": "H2_micro_L",
-        "OXYGEN": "O2_micro_L",
-        "NITROGEN": "N2_micro_L",
-        "METHANE": "CH4_micro_L",
-        "CARBON MONOXIDE": "CO_micro_L"
-      }
-    }
-  }
+  ]
 }
