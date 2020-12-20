@@ -4,7 +4,7 @@
 #   FILE:               main.pu
 #   FILE PURPOSE:       Run main script of program
 #   Author:             Erin Bryson
-#   DATE LAST MODIFIED: 12/04/2020
+#   DATE LAST MODIFIED: 12/20/2020
 #
 #   DESCRIPTION:
 #       This file is used to test the Config class in library file datasheet.py
@@ -21,11 +21,6 @@ test_data_dir = "Data_Directories"
 test_report_ext = "xls"
 
 config = Config(config_file)            # Set config object
-
-
-class TestConfigImports(ut.TestCase):
-    def test_data_dit(self):
-        self.assertTrue(config.report_ext, test_report_ext)
 
 
 if __name__ == '__main__':
