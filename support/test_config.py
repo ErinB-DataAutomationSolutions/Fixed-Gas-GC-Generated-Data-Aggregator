@@ -38,6 +38,7 @@ class TestConfig(ut.TestCase):
 
     def setUp(self) -> None:
         self.config = Config(config_file)
+        print(type(self.config.data_sheets()))
 
     def tearDown(self) -> None:
         pass
@@ -49,8 +50,7 @@ class TestConfig(ut.TestCase):
         self.assertEqual(self.config.report_ext, report_ext)
 
     def test_data_sheets(self):
-        print(self.config.data_sheets())
-        self.assertDictEqual(self.config.data_sheets, data_sheets)
+        self.assertDictEqual(self.config.data_sheets(), data_sheets)
 
 
 if __name__ == '__main__':
