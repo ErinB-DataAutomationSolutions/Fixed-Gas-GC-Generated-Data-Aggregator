@@ -1,6 +1,32 @@
 # IMPORTS
 import unittest as ut
-from support.data_upload import DataSheet
+from support.data_upload import DataSheet as ds
+import pandas as pd
+
+# Test Variables
+Sheet1 = {
+    "filter_cols": [],
+    "filter_rows": [],
+    "index_cols": [],
+    "col_data_map": {
+        "AcqMeth":  "method_nm",
+        "AcqOp": "operator_nm",
+        "InjDateTime": "dt_tm",
+        "SampleName": "sample_nm"
+    },
+    "row_data_map": {}
+}
+
+
+class TestDataSheet(ut.TestCase):
+
+    def setUp(self) -> None:
+        pass
+
+    def tearDown(self) -> None:
+        pass
+
 
 if __name__ == "__main__":
-    pass
+    print(type(Sheet1))
+    # ut.main()
