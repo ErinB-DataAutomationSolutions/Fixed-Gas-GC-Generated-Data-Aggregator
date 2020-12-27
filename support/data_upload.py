@@ -1,5 +1,6 @@
 # IMPORTS
 import json as js
+import pandas as pd
 
 
 # Config class
@@ -77,3 +78,14 @@ class DataSheet:
 
     def import_data(self):
         return self.file.parse(sheet_name=self.name)
+
+
+class DataExport:
+
+    def __init__(self, export_dir: str, export_file_nm: str, export_data: pd.DataFrame):
+        self.export_dir = export_dir
+        self.export_file_nm = export_file_nm
+        self.export_data = export_data
+
+    def export(self):
+        self.export_data.to_excel(f"{self.export_file_nm}.xlsx")
