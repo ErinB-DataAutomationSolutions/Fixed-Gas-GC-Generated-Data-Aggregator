@@ -8,6 +8,7 @@ data_file_nm = "test_REPORT01.xlsx"
 sheet_names = ["Sheet1", "Compound"]
 sheet_one_dict = {
     "headers": 0,
+    "transpose": 1,
     "filter_cols": [],
     "filter_rows":  [
         "AcqMeth",
@@ -38,6 +39,12 @@ class TestDataSheet(ut.TestCase):
         self.data_sheet_1 = DataSheet(sheet_names[1], data_file_nm, sheet_one_dict)
 
     def tearDown(self) -> None:
+        pass
+
+    def test_import_data(self):
+        pass
+
+    def test_filter_data(self):
         pass
 
 

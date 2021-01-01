@@ -1,6 +1,5 @@
 # IMPORTS
 import json as js
-import pandas as pd
 
 
 # Config class
@@ -46,46 +45,55 @@ class DataSheet:
         self.sheet_dict = sheet_dict
         self.file = file
 
+    @property
+    def headers(self):
+        if self.sheet_dict["headers"] == 1:
+            return True
+        return False
+
     # If data filter columns if specified
     @property
     def filter_cols(self):
-        if "filter_cols" in self.sheet_dict:
-            return self.sheet_dict["filter_cols"]
+        return self.sheet_dict["filter_cols"]
 
     # Get data filter rows if specified
     @property
     def filter_rows(self):
-        if "filter_rows" in self.sheet_dict:
-            return self.sheet_dict["filter_rows"]
+        return self.sheet_dict["filter_rows"]
 
     # Get index column if specified
     @property
     def index_cols(self):
-        if "index_col" in self.sheet_dict:
-            return self.sheet_dict
+        return self.sheet_dict
 
     # Get column data map if specified
     @property
     def col_data_map(self):
-        if "col_data_map" in self.sheet_dict:
-            return self.sheet_dict["col_data_map"]
+        return self.sheet_dict["col_data_map"]
 
     # Get row data map if specified
     @property
     def row_data_map(self):
-        if "row_data_map" in self.sheet_dict:
-            return self.sheet_dict["row_data_map"]
+        return self.sheet_dict["row_data_map"]
 
+    @property
     def import_data(self):
         return self.file.parse(sheet_name=self.name)
+
+    def filtered_data(self):
+        pass
+
+    def transpose_data(self):
+        self.import_data = self.import_data.transpose()
 
 
 class DataExport:
 
-    def __init__(self, export_dir: str, export_file_nm: str, export_data: pd.DataFrame):
+    def __init__(self, export_dir: str, export_file_nm: str, export_file_ext: str, export_data):
         self.export_dir = export_dir
         self.export_file_nm = export_file_nm
         self.export_data = export_data
+        self.export_file_ext = export_file_ext
 
     def export(self):
-        self.export_data.to_excel(f"{self.export_file_nm}.xlsx")
+        self.export_data.to_excel(f"{self.export_file_nm}.{self.export_file_ext}")
