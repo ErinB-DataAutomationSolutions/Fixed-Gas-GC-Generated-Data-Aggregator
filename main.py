@@ -26,53 +26,53 @@
 #
 ########################################################################################################################
 
-# IMPORT LIBRARIES #
-import os
-import json as js
 import pandas as pd
-# import numpy as np
+from pandas.testing import assert_frame_equal
 
-# Get current dir
-curr_dir = os.curdir
+sheet_one_import_data = {
+    'Col1': ['ExtraIndex1', 'AcqMeth', 'AcqOp', 'InjDateTime', 'SampleName', 'ExtraIndex2'],
+    'Col2': ['EXTRA_VALUE_1', 'TEST_ACQ_MTH_NM', 'TEST_ACQ_OP_NM', '20-Nov-20, 16:32:32', 'TEST_SAMPLE_NM',
+             'EXTRA_VALUE_2']
+}
 
-# IMPORT AND METADATA ASSIGNMENT WILL BE HANDLED BY CONFIG CLASS
-# Import CONFIG Details
-with open("config_files/config_default.json") as config_file:
-    config = js.load(config_file)
+# Create DataFrame of imported data from Sheet1
+sheet_one_import_df = pd.DataFrame(data=sheet_one_import_data)
+# print(sheet_one_import_df)
 
-# Assign data directory and report name values
-data_dir = config['data_dir']                       # Construct data directory string
-report_file_name = config["report_name"]            # Set report file name
-report_ext = config["report_ext"]                   # Set report file extension
-data_sheets = config["data_sheets"]                 # Get DataSheet dictionary
-data_columns = config["data_columns"]               # Set data columns for export
+sheet_one = pd.read_excel('support\\test_REPORT01.xlsx', header=None, sheet_name='Sheet1')
+# sheet_one.set_index('0')
+print('Imported data from Sheet1')
+print(sheet_one)
 
-# STEP : Construct Directory Paths
-data_dir_path = f"{curr_dir}\\{data_dir}"           # Construct data dir path
-report_file = f"{report_file_name}.{report_ext}"    # Construct report file
+# Transpose the data
+sheet_one = sheet_one.T
 
-# STEP : Get all immediate child directories
-child_dirs = os.listdir(f"{data_dir_path}")
+print("\nLet's look at the transposed data, as imported:")
+print(sheet_one)
 
-# STEP : Create Empty Master DataFrame
-export_data_df = pd.DataFrame(columns=data_columns)
+print("\nNow, let's set our columns to the first row")
+sheet_one.columns = sheet_one.iloc[0]
+sheet_one = sheet_one.drop(index=0)
+print(sheet_one)
 
-for key in data_sheets:
-    sheet_cols = data_sheets
-    print(sheet_cols[key])
+print("\nNow let's look at each column name to be sure we've got he dataframe we want:")
+for column in sheet_one.columns:
+    print(column)
 
-# STEP : Access each directory
-for child_dir in child_dirs:
-    # file_name = f"{data_dir_path}\\{child_dir}\\{report_file}"  # Create file name
-    pass
+# sheet_one.columns = ['Col1', 'Col2']
 
-# STEP : Create Excel File Object
-    # file = pd.ExcelFile(file_name)
+# print(sheet_one)
+# print('\n')
 
-# STEP : Extract data per sheet
-    for key in data_sheets:
-        # sheet_cols = data_sheets[key]               # Get list of req columns in sheet
-        # sheet_data_df = file.parse(sheet_name=key)   # Store sheet data in DataFrame
-        pass
+# assert_frame_equal(sheet_one, sheet_one_import_df, check_dtype=False, check_column_type=False)
 
-# STEP :
+# sheet_one = sheet_one.set_index('Col1')
+# print(sheet_one)
+# print('\n')
+
+# sheet_one = sheet_one.T
+# print(sheet_one)
+# for column in sheet_one.columns:
+#     print(column)
+# print('\n')
+
