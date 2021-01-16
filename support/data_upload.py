@@ -44,17 +44,16 @@ class DataSheet:
         self.name = name
         self.sheet_dict = sheet_dict
         self.file = file
-        self.test_num = 1
 
     @property
     def headers_bool(self):
-        if self.sheet_dict["headers"] == 1:
+        if self.sheet_dict["headers_bool"] == 1:
             return True
         return False
 
     @property
     def transpose_bool(self):
-        if self.sheet_dict["transpose"] == 1:
+        if self.sheet_dict["transpose_bool"] == 1:
             return True
         return False
 
@@ -91,10 +90,7 @@ class DataSheet:
         pass
 
     def transpose_data(self):
-        self.import_data = self.import_data.T
-
-    def increase_num(self):
-        self.test_num = self.test_num + 1
+        pass
 
 
 class DataExport:
