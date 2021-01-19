@@ -4,7 +4,7 @@
 #   FILE:               pandas_import_tutorial.py
 #   PURPOSE:            To test steps required for data extraction, cleaning, and export
 #   AUTHOR:             Erin Bryson
-#   DATE LAST MODIFIED: 01.15.2021
+#   DATE LAST MODIFIED: 01.19.2021
 #
 ########################################################################################################################
 import pandas as pd
@@ -21,6 +21,9 @@ data_map = {
     "SampleName": "sample_nm"
 }
 
+headers_bool = False
+transpose_bool = True
+
 # Set empty lists for data map keys and values
 data_map_keys = []
 data_map_vals = []
@@ -36,8 +39,7 @@ print(data_map_keys)
 print("\nWhich will then need to be mapped to the following data:")
 print(data_map_vals)
 
-sheet_one = pd.read_excel('support\\test_REPORT01.xlsx', header=None, sheet_name='Sheet1')
-# sheet_one.set_index('0')
+sheet_one = pd.read_excel('support\\test_REPORT01.xlsx', header=None, sheet_name='Sheet1', index_col=None)
 print('\nImported data from Sheet1:')
 print(sheet_one)
 
@@ -62,6 +64,7 @@ print(sheet_one)
 
 print("\nFinally, let's rename our columns to match the final export column names:")
 sheet_one.columns = data_map_vals   # Rename columns
+sheet_one = sheet_one.reset_index(drop=True)
 print(sheet_one)
 
 print('\n--- COMPOUND DATA ---')
@@ -73,3 +76,75 @@ data_map = {
     "METHANE": "CH4_micro_L",
     "CARBON MONOXIDE": "CO_micro_L"
 }
+
+headers_bool = True
+
+headers = ["Name", "Amount"]
+
+transpose_bool = True
+
+# Set empty lists for data map keys and values
+data_map_keys = []
+data_map_vals = []
+
+for key in data_map:
+    data_map_keys.append(key)
+    data_map_vals.append(data_map[key])
+
+print("\nWe need to get the following data from Compound:")
+print(data_map_keys)
+
+print("\nWhich will then need to be mapped to the following data:")
+print(data_map_vals)
+
+compound = pd.read_excel('support\\test_REPORT01.xlsx', sheet_name='Compound', usecols=headers)
+compound = compound.dropna().set_index('Name')
+print('\nImported data from Sheet1:')
+print(compound)
+
+# Transpose the data
+compound = compound.T.reset_index(drop=True)
+
+print("\nLet's look at the transposed data:")
+print(compound)
+
+print("\nFinally, let's rename the columns:")
+compound.columns = data_map_vals
+
+# --- COMBINE DATA INTO ONE ROW --- #
+
+print("\n--- COMBINED DATA ---")
+print("\nWe need to combine the above into a single DataFrame.")
+export_data = pd.concat([sheet_one, compound], axis=1)
+print(export_data)
+
+print("\nLet's make sure we have all the columns:")
+for column in export_data.columns:
+    print(column)
+
+print("\nNow to check whether we can combine rows with the same index val")
+print("\nLet's make another DataFrame called 'temp_data'")
+temp_data = pd.DataFrame({
+    'method_nm': ['METH_NM_2'],
+    'operator_nm': ['OP_NM_2'],
+    'dt_tm': ['20-Nov-20, 16:32:32'],
+    'sample_nm': ['SAMPOLE_NM_2'],
+    'CO2_micro_L': [0.1],
+    'H2_micro_L': [0.2],
+    'O2_micro_L': [0.3],
+    'N2_micro_L': [0.4],
+    'CH4_micro_L': [0.5],
+    'CO_micro_L': [0.6]
+})
+
+print(temp_data)
+
+print("When we use the concat function on axis=0 (default) we get:")
+export_data = pd.concat([export_data, temp_data])
+print(export_data)
+
+print("\nWe can do this for each file, and then reset the index like so:")
+export_data = export_data.reset_index(drop=True)
+print(export_data)
+
+print("\nAnd voila! Now that we know what to do, it's time to clean this up!")
