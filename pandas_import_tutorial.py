@@ -21,6 +21,8 @@ data_map = {
     "SampleName": "sample_nm"
 }
 
+# Set logic checks for Sheet1.
+# These will be extracted form the config file
 headers_bool = False
 transpose_bool = True
 
@@ -39,12 +41,18 @@ print(data_map_keys)
 print("\nWhich will then need to be mapped to the following data:")
 print(data_map_vals)
 
-sheet_one = pd.read_excel('support\\test_REPORT01.xlsx', header=None, sheet_name='Sheet1', index_col=None)
+if headers_bool:
+    header = 0
+else:
+    header = None
+
+sheet_one = pd.read_excel('support\\test_REPORT01.xlsx', header=header, sheet_name='Sheet1', index_col=None)
 print('\nImported data from Sheet1:')
 print(sheet_one)
 
 # Transpose the data
-sheet_one = sheet_one.T
+if transpose_bool:
+    sheet_one = sheet_one.T
 
 print("\nLet's look at the transposed data, as imported:")
 print(sheet_one)
@@ -59,7 +67,7 @@ for column in sheet_one.columns:
     print(column)
 
 print("\nLet's get rid of extra columns:")
-sheet_one = sheet_one.filter(items=data_map_keys)   # Filter out all but desired columns
+sheet_one = sheet_one.filter(items=data_map_keys)   # Filter out all undesired columns
 print(sheet_one)
 
 print("\nFinally, let's rename our columns to match the final export column names:")
@@ -68,6 +76,9 @@ sheet_one = sheet_one.reset_index(drop=True)
 print(sheet_one)
 
 print('\n--- COMPOUND DATA ---')
+
+# Set data map dictionary for Compound.
+# This will be extracted from the config file
 data_map = {
     "CARBON DIOXIDE": "CO2_micro_L",
     "HYDROGEN": "H2_micro_L",
@@ -78,9 +89,7 @@ data_map = {
 }
 
 headers_bool = True
-
-headers = ["Name", "Amount"]
-
+use_cols = ["Name", "Amount"]
 transpose_bool = True
 
 # Set empty lists for data map keys and values
@@ -97,19 +106,30 @@ print(data_map_keys)
 print("\nWhich will then need to be mapped to the following data:")
 print(data_map_vals)
 
-compound = pd.read_excel('support\\test_REPORT01.xlsx', sheet_name='Compound', usecols=headers)
-compound = compound.dropna().set_index('Name')
-print('\nImported data from Sheet1:')
+if headers_bool:
+    header = 0
+else:
+    header = None
+
+compound = pd.read_excel('support\\test_REPORT01.xlsx', header=header, sheet_name='Compound', usecols=use_cols)
+compound = compound.dropna()
+# compound = compound.dropna().set_index(use_cols[0])
+print('\nImported data from Compound:')
 print(compound)
 
 # Transpose the data
-compound = compound.T.reset_index(drop=True)
+if transpose_bool:
+    compound = compound.T.reset_index(drop=True)
 
 print("\nLet's look at the transposed data:")
 print(compound)
 
 print("\nFinally, let's rename the columns:")
+compound.columns = compound.iloc[0]
+compound = compound.filter(items=data_map_keys)   # Filter out all undesired columns
 compound.columns = data_map_vals
+compound = compound.drop(index=0).reset_index(drop=True)
+print(compound)
 
 # --- COMBINE DATA INTO ONE ROW --- #
 
