@@ -4,7 +4,7 @@
 #   FILE:               pandas_import_tutorial.py
 #   PURPOSE:            To test steps required for data extraction, cleaning, and export
 #   AUTHOR:             Erin Bryson
-#   DATE LAST MODIFIED: 01.19.2021
+#   DATE LAST MODIFIED: 01.20.2021
 #
 ########################################################################################################################
 import pandas as pd
@@ -47,6 +47,7 @@ else:
     header = None
 
 sheet_one = pd.read_excel('support\\test_REPORT01.xlsx', header=header, sheet_name='Sheet1', index_col=None)
+sheet_one = sheet_one.dropna()
 print('\nImported data from Sheet1:')
 print(sheet_one)
 
