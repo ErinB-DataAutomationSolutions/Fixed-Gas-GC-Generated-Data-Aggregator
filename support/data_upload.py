@@ -82,8 +82,12 @@ class DataSheet:
     # If data filter columns if specified
     @property
     def use_cols(self):
-        if self.header:
-            return self.sheet_dict["headers_nm"]
+        if self.sheet_dict["headers_bool"]:
+            try:
+                return self.sheet_dict["headers_nm"]
+            except KeyError:
+                print("ERROR! Use Cols list missing from config file!")
+                # return -1
         return None
 
     # Get row data map if specified
