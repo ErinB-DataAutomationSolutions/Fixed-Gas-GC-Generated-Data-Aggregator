@@ -65,10 +65,16 @@ class DataSheet:
         self.file = file
 
     @property
+    def header_bool(self):
+        if self.sheet_dict["headers_bool"] == 1:
+            return True
+        return False
+
+    @property
     def header(self):
         """This property sets 'header' parameter in read_excel() either to '0' (headers located on top row of excel
         sheet) or 'None'(no headers used in excel sheet)"""
-        if self.sheet_dict["headers_bool"] == 1:
+        if self.header_bool:
             return 0
         return None
 
@@ -82,12 +88,12 @@ class DataSheet:
     # If data filter columns if specified
     @property
     def use_cols(self):
-        if self.sheet_dict["headers_bool"]:
+        if self.header_bool:
             try:
                 return self.sheet_dict["headers_nm"]
             except KeyError:
                 print("ERROR! Use Cols list missing from config file!")
-                # return -1
+                # Need to pass error to prevent data import attempt
         return None
 
     # Get row data map if specified
