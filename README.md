@@ -15,4 +15,4 @@ JSON config file structure and definitions:
     columns
     - <b>Headers NM:</b> Columns to import data from, if required
     - <b>Transpose Bool:</b> If <i>TRUE</i>, transpose imported data.
-    - <b>Data Mao:</b> Data dictionary that maps existing data labels to desired export-table column names
+    - <b>Data Map:</b> Data dictionary that maps existing data labels to desired export-table column names
