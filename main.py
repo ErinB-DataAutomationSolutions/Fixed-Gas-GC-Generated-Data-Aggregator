@@ -26,8 +26,22 @@
 #
 ########################################################################################################################
 
+# IMPORTS
+from support.data_upload import Config
+from support.data_upload import DataSheet
 
 
+# METHODS
+def get_config_file_name() -> str:
+    pass
+
+
+def get_import_data_dir() -> str:
+    pass
+
+
+def get_export_data_dir() -> str:
+    pass
 
 
 if __name__ == "__main__":
