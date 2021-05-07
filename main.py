@@ -36,10 +36,6 @@ def get_config_file_name() -> str:
     pass
 
 
-def get_import_data_dir() -> str:
-    pass
-
-
 def get_export_data_dir() -> str:
     pass
 
