@@ -140,3 +140,15 @@ class DataSheet:
         data_df.columns = self.data_map_vals
 
         return data_df
+
+
+class DataExport:
+
+    def __init__(self, export_dir: str, export_file_nm: str, export_file_ext: str, export_data):
+        self.export_dir = export_dir
+        self.export_file_nm = export_file_nm
+        self.export_data = export_data
+        self.export_file_ext = export_file_ext
+
+    def export(self):
+        self.export_data.to_excel(f"{self.export_file_nm}.{self.export_file_ext}")
