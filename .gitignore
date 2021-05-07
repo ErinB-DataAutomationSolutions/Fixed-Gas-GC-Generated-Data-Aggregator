@@ -1,4 +1,5 @@
 # DO NOT TRACK CONTENT OF THESE FOLDERS
 Data_Directories/
+Export_Files/
 support/__pycache__/
 .idea/

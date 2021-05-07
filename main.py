@@ -16,9 +16,7 @@
 #       - data_columns: List of required columns in extracted data
 #   ) Construct dir paths
 #   ) Get list of all generated child directories
-#   ) Create empty master DataFrame
 #   ) For each report in directory
-#   )   Create pandas ExcelFile object
 #   )   For each required sheet
 #   )       Create temp_data_df DataFrame from sheet
 #   )       Extract specific data slice from DataFrame
@@ -41,4 +39,8 @@ def get_export_data_dir() -> str:
 
 
 if __name__ == "__main__":
+    # () Get Config File Name
+    # () Create Sheet1 Object
+    # () Create Compound Object
+    # () Export
     pass
