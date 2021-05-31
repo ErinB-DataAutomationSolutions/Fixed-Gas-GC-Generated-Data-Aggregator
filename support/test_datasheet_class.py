@@ -46,10 +46,12 @@ compound_missing_cols_metadata = {
 class TestDataSheet(ut.TestCase):
 
     def setUp(self) -> None:
-        self.sheet_1 = DataSheet('Sheet1', 'support\\test_REPORT01.xlsx', sheet1_metadata)
-        self.compound = DataSheet('Compound', 'support\\test_REPORT01.xlsx', compound_metadata)
-        self.compound_missing_cols_error = DataSheet('Compound', 'support\\test_REPORT01.xlsx',
-                                                     compound_missing_cols_metadata)
+        # 'support\\test_REPORT01.xlsx',
+        self.sheet_1 = DataSheet('Sheet1', sheet1_metadata)
+
+        # 'support\\test_REPORT01.xlsx',
+        self.compound = DataSheet('Compound', compound_metadata)
+        self.compound_missing_cols_error = DataSheet('Compound', compound_missing_cols_metadata)
 
     def tearDown(self) -> None:
         pass

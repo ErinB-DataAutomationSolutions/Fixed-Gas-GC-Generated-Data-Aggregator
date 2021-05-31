@@ -59,10 +59,9 @@ Metadata captured from config JSON file:
 
 # Class housing data sheet info
 class DataSheet:
-    def __init__(self, name: str, file, sheet_dict: dict):
+    def __init__(self, name: str, sheet_dict: dict):
         self.name = name
         self.sheet_dict = sheet_dict
-        self.file = file
 
     @property
     def header_bool(self):
@@ -119,8 +118,8 @@ class DataSheet:
 
         return data_map_vals
 
-    def import_data(self) -> pd.DataFrame:
-        return pd.read_excel(self.file, sheet_name=self.name, header=self.header, usecols=self.use_cols)
+    def import_data(self, file_name) -> pd.DataFrame:
+        return pd.read_excel(file_name, sheet_name=self.name, header=self.header, usecols=self.use_cols)
 
     def clean_data(self, data_df: pd.DataFrame) -> pd.DataFrame:
 

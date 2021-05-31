@@ -27,20 +27,45 @@
 # IMPORTS
 from support.data_upload import Config
 from support.data_upload import DataSheet
+import sys
+import glob
 
 
 # METHODS
-def get_config_file_name() -> str:
-    pass
+def get_config_file():
+    config_file_name = input("Enter Config File Name: ")
+    config_file_path = f"config_files\\{config_file_name}.json"
+    return Config(config_file_path)
 
 
-def get_export_data_dir() -> str:
-    pass
+def get_input_data_file_paths(file_name) -> list:
+    return glob.glob(f'./Data_Directories/*/{file_name}')
 
 
 if __name__ == "__main__":
     # () Get Config File Name
+    config = get_config_file()
+    # config = Config("config_files\\config_default.json")
+
+    # () Get all file paths
+    input_data_file_paths = get_input_data_file_paths(config.full_file_name)
+    # print(input_data_file_dirs)
+
+    # () Get All Sheet Metadata
+    sheets_metadata = config.data_sheets()
+    # print(sheets_metadata)
+
     # () Create Sheet1 Object
+    sheet_1_metadata = sheets_metadata["Sheet1"]
+    # print(sheet_1_metadata)
+
     # () Create Compound Object
+    compound_metadata = sheets_metadata["Compound"]
+    # print(compound_metadata)
+
+    # () Get data in each sheet of each file:
+    for input_data_file_path in input_data_file_paths:
+        pass
+
     # () Export
     pass
