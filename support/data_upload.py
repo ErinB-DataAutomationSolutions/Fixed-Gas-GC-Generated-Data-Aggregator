@@ -28,7 +28,7 @@ Metadata captured from config JSON file:
             return js.load(config_file)
 
     @property
-    def data_dir(self):
+    def input_data_dir(self):
         """Store data dir metadata"""
         return self.config["data_dir"]
 
@@ -128,11 +128,12 @@ class DataSheet:
 
         # Transpose data, if needed
         if self.transpose_bool:
-            data_df = data_df.T
+            data_df = data_df.T.reset_index(drop=True)
 
         # Filter unwanted data
         data_df.columns = data_df.iloc[0]                       # Set column names to equal to row 1
         data_df = data_df.filter(items=self.data_map_keys)      # Filter out all undesired columns
+        data_df.columns = self.data_map_vals
         data_df = data_df.drop(index=0).reset_index(drop=True)  # Drop the now-redundant first row
         data_df = data_df.reset_index(drop=True)                # Reset Index
 

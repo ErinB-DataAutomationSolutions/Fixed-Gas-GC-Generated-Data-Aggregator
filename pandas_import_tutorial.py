@@ -113,6 +113,7 @@ else:
     header = None
 
 compound = pd.read_excel('support\\test_REPORT01.xlsx', header=header, sheet_name='Compound', usecols=use_cols)
+print(compound)
 compound = compound.dropna()
 # compound = compound.dropna().set_index(use_cols[0])
 print('\nImported data from Compound:')
@@ -129,6 +130,7 @@ print("\nFinally, let's rename the columns:")
 compound.columns = compound.iloc[0]
 compound = compound.filter(items=data_map_keys)   # Filter out all undesired columns
 compound.columns = data_map_vals
+print(compound)
 compound = compound.drop(index=0).reset_index(drop=True)
 print(compound)
 

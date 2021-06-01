@@ -4,27 +4,12 @@
 #   FILE:               main.pu
 #   FILE PURPOSE:       Run main script of program
 #   Author:             Erin Bryson
-#   DATE LAST MODIFIED: 12/04/2020
-#
-#   PROGRAM STEPS
-#   ) Set Current path
-#   ) Import the following from config_default.json:
-#       - data_dir:     Directory housing generated child-directories
-#       - report_name:  File name of generated report
-#       - report_ext:   File extension of generated report
-#       - data_sheets:  Dictionary of sheets to use, each containing a list of required info
-#       - data_columns: List of required columns in extracted data
-#   ) Construct dir paths
-#   ) Get list of all generated child directories
-#   ) For each report in directory
-#   )   For each required sheet
-#   )       Create temp_data_df DataFrame from sheet
-#   )       Extract specific data slice from DataFrame
-#   )       Append data to master table
+#   DATE LAST MODIFIED: 05/31/2021
 #
 ########################################################################################################################
 
 # IMPORTS
+import pandas as pd
 from support.data_upload import Config
 from support.data_upload import DataSheet
 from support.data_upload import ExportData
@@ -55,24 +40,35 @@ def build_export_file_name() -> str:
     export_ext = "xlsx"
 
     now = dt.now()
-    dt_string = now.strftime("%d.%m.%Y.%H.%M.%S")
+    dt_string = now.strftime("%m%d%Y.%H%M%S")
 
     return f"{user_name}.{dt_string}.{export_ext}"
 
 
-def create_export_object():
+def create_export_object(export_data_cols):
     # Build file name
     export_file_name = build_export_file_name()
+    return ExportData(export_file_name, export_data_cols)
+
+    # print(f"File {export_file_name} has been exported!")
 
 
 if __name__ == "__main__":
     # () Get Config File Name
-    config = create_config_object()
+    try:
+        config = create_config_object()
+        print(config.input_data_dir)
+    except FileNotFoundError as e:
+        print("The following error occurred:")
+        print(e)
+        input("Press any key to exit program... ")
+        sys.exit(e)
+
     # config = Config("config_files\\config_default.json")
 
     # () Get all file paths
-    input_data_file_paths = get_input_data_file_paths(config.full_file_name)
-    # print(input_data_file_dirs)
+    input_data_file_paths = get_input_data_file_paths(config.input_data_dir, config.full_file_name)
+    print(input_data_file_paths)
 
     # () Get All Sheet Metadata
     sheets_metadata = config.data_sheets()
@@ -83,7 +79,31 @@ if __name__ == "__main__":
     compound = create_sheet_object(sheets_metadata, "Compound")
 
     # () Create Export Table Object
+    # Get the mapped export column values for Sheet1
+    sheet_1_export_cols = sheet_1.data_map_vals
+    # print(sheet_1_export_cols)
+
+    # Get the mapped export column values for
+    compound_export_cols = compound.data_map_vals
+    # print(compound_export_cols)
+
+    # Combine export column values for both sheets
+    export_cols = sheet_1_export_cols + compound_export_cols
+    # print(export_cols)
+
+    create_export_object()
 
     # () Get data in each sheet of each file:
     for input_data_file_path in input_data_file_paths:
-        pass
+        # Get Sheet1 Data
+        sheet_1_df = sheet_1.import_data(input_data_file_path)
+        sheet_1_df = sheet_1.clean_data(sheet_1_df)
+        # print(sheet_1_df)
+
+        # Get Compound Data
+        compound_df = compound.import_data(input_data_file_path)
+        compound_df = compound.clean_data(compound_df)
+        # print(compound_df)
+
+        # Create Export Data
+        export_data = create_export_object(export_cols)

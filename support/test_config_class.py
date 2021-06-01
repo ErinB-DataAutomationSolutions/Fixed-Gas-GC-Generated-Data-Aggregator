@@ -32,7 +32,7 @@ class TestConfig(ut.TestCase):
         data_dir = "Data_Directories"
 
         # Test
-        self.assertEqual(self.config.data_dir, data_dir)
+        self.assertEqual(self.config.input_data_dir, data_dir)
 
     def test_report_ext(self):
         # Expected Value
@@ -42,7 +42,7 @@ class TestConfig(ut.TestCase):
         self.assertEqual(self.config.report_ext, report_ext)
 
     def test_is_dict(self):
-        self.assertTrue(type(self.config.data_dir), dict)
+        self.assertTrue(type(self.config.input_data_dir), dict)
 
     def test_data_sheets(self):
         # Expected Value
