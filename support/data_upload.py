@@ -142,19 +142,24 @@ class DataSheet:
         return data_df
 
 
+def re_index_df(df):
+    return df.reset_index(drop=True)
+
+
+def add_data_row(export_df: pd.DataFrame, temp_data: pd.DataFrame):
+    return pd.concat([export_df, temp_data])
+
+
 class ExportData:
 
     def __init__(self, export_data_file_path, export_data_cols):
         self.export_data_file_path = export_data_file_path
         self.export_data_cols = export_data_cols
-        self.export_data = pd.DataFrame
+        # self.export_data = pd.DataFrame
 
-    def add_data_row(self, temp_data: pd.DataFrame):
-        self.export_data = pd.concat([self.export_data, temp_data])
+    def create_export_df(self):
+        return pd.DataFrame(columns=self.export_data_cols)
 
-    def re_index_df(self):
-        self.export_data = self.export_data.reset_index(drop=True)
-
-    def export(self):
+    def export(self, export_df):
         # self.export_data.to_excel(f"{self.export_file_nm}.{self.export_file_ext}")
-        self.export_data.to_excel(self.export_data_file_path)
+        export_df.to_excel(self.export_data_file_path)
