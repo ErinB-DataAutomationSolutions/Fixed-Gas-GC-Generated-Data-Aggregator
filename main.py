@@ -4,17 +4,13 @@
 #   FILE:               main.py
 #   FILE PURPOSE:       Run main script of program
 #   Author:             Erin Bryson
-#   DATE LAST MODIFIED: 05/31/2021
+#   DATE LAST MODIFIED: 06/01/2021
 #
 ########################################################################################################################
 
 # IMPORTS
 import pandas as pd
-from support.data_upload import Config
-from support.data_upload import DataSheet
-from support.data_upload import ExportData
-from support.data_upload import re_index_df
-from support.data_upload import add_data_row
+from support.data_upload import Config, DataSheet, ExportData, re_index_df, add_data_row
 import sys
 import glob
 from datetime import datetime as dt
