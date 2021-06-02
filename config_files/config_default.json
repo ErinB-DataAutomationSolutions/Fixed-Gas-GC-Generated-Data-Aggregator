@@ -1,7 +1,7 @@
 {
   "data_dir": "Data_Directories",
   "report_name": "REPORT01",
-  "report_ext": "xlsx",
+  "report_ext": "xls",
   "data_sheets":
   {
     "Sheet1": {
