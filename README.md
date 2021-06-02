@@ -5,6 +5,7 @@ Required Libraries:
 - JSON
 - NumPy
 - Pandas
+- openpyxl
 
 JSON config file structure and definitions:
 - <b>Data Dir:</b> Directory housing sample-generated reports
