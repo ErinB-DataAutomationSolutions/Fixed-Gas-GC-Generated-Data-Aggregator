@@ -1,6 +1,18 @@
+########################################################################################################################
+#
+#   PROGRAM:            Rob's Data Grabber
+#   FILE:               data_upload.py
+#   FILE PURPOSE:       Library for interacting with and extracting data from Data Sheets
+#   Author:             Erin Bryson
+#   DATE LAST MODIFIED: 06/02/2021
+#
+########################################################################################################################
+
+
 # IMPORTS
 import json as js
 import pandas as pd
+from datetime import datetime as dt
 
 
 # Config class
@@ -152,14 +164,6 @@ class DataSheet:
         return data_df
 
 
-def re_index_df(df):
-    return df.reset_index(drop=True)
-
-
-def add_data_row(export_df: pd.DataFrame, temp_data: pd.DataFrame):
-    return pd.concat([export_df, temp_data])
-
-
 class ExportData:
 
     def __init__(self, export_data_file_path, export_data_cols):
@@ -173,3 +177,80 @@ class ExportData:
     def export(self, export_df):
         # self.export_data.to_excel(f"{self.export_file_nm}.{self.export_file_ext}")
         export_df.to_excel(self.export_data_file_path)
+
+
+def re_index_df(df):
+    return df.reset_index(drop=True)
+
+
+def add_data_row(export_df: pd.DataFrame, temp_data: pd.DataFrame):
+    return pd.concat([export_df, temp_data])
+
+
+def create_sheet_obj(config_sheets_metadata, sheet_name):
+    sheet_metadata = config_sheets_metadata[sheet_name]
+    return DataSheet(sheet_name, sheet_metadata)
+
+
+def create_sheet_obj_list(sheet_names: list, sheets_metadata_dict: dict):
+    # Create empty object list
+    sheet_obj_list = []
+
+    # Populate sheet_obj_list with constructed sheet objects
+    for sheet_name in sheet_names:
+        sheet_obj = create_sheet_obj(sheets_metadata_dict, sheet_name)
+        sheet_obj_list.append(sheet_obj)
+
+    return sheet_obj_list
+
+
+def build_export_file_nm() -> str:
+    user_name = input("User Name: ")
+    export_dir = input("Export directory: ")
+    export_ext = "xlsx"
+
+    now = dt.now()
+    dt_string = now.strftime("%m%d%Y.%H%M%S")
+
+    return f"{export_dir}\\{user_name}.{dt_string}.{export_ext}"
+
+
+def create_export_obj(export_data_cols):
+    # Build file name
+    export_file_name = build_export_file_nm()
+    return ExportData(export_file_name, export_data_cols)
+
+
+def create_export_df(data_file_paths, exp_df, sheet_obj_list):
+
+    for data_file_path in data_file_paths:
+
+        # Create an empty DataFrame to store input data
+        # NOTE: Creating an empty DataFrame with a column allows data to be appended below
+        temp_df = pd.DataFrame({'temp_col': []})
+
+        # Import data from each sheet
+        for sheet_obj in sheet_obj_list:
+            sheet_df = sheet_obj.import_data(data_file_path)
+
+            # Clean sheet data
+            sheet_df = sheet_obj.clean_data(sheet_df)
+
+            # Add imported data to new data row
+            temp_df = pd.concat([temp_df, sheet_df], axis=1)
+
+            # Clean up
+            del sheet_df
+
+        # Drop the temporary column used for work-around
+        temp_df = temp_df.drop(columns='temp_col')
+
+        # Add new data row
+        exp_df = add_data_row(exp_df, temp_df)
+
+        # Clean up
+        del temp_df
+
+    exp_df = re_index_df(exp_df)
+
+    return exp_df
