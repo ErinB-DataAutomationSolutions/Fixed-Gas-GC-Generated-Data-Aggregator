@@ -44,6 +44,11 @@ class TestConfig(ut.TestCase):
     def test_is_dict(self):
         self.assertTrue(type(self.config.input_data_dir), dict)
 
+    def test_data_sheet_keys(self):
+        expected_value = ["Sheet1", "Compound"]
+
+        self.assertEqual(self.config.data_sheet_names, expected_value)
+
     def test_data_sheets(self):
         # Expected Value
         data_sheets = {

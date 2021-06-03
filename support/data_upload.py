@@ -56,6 +56,16 @@ Metadata captured from config JSON file:
         if "data_sheets" in self.config:
             return self.config["data_sheets"]
 
+    # Store names of data sheets
+    @property
+    def data_sheet_names(self):
+        names_list = []
+
+        for key in self.config["data_sheets"].keys():
+            names_list.append(key)
+
+        return names_list
+
 
 # Class housing data sheet info
 class DataSheet:
