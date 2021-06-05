@@ -161,10 +161,16 @@ class DataSheet:
             data_df = data_df.T.reset_index(drop=True)
 
         # Filter unwanted data
-        data_df.columns = data_df.iloc[0]                       # Set column names to equal to row 1
-        data_df = data_df.filter(items=self.data_map_keys)      # Filter out all undesired columns
+        if len(self.use_cols) > 1:
+            data_df.columns = data_df.iloc[0]                       # Set column names to equal to row 1
+
+        data_df = data_df.filter(items=self.data_map_keys, axis=1)      # Filter out all undesired columns
+
         data_df.columns = self.data_map_vals
-        data_df = data_df.drop(index=0).reset_index(drop=True)  # Drop the now-redundant first row
+
+        if len(self.use_cols) > 1:
+            data_df = data_df.drop(index=0).reset_index(drop=True)  # Drop the now-redundant first row
+
         data_df = data_df.reset_index(drop=True)                # Reset Index
 
         data_df.columns = self.data_map_vals
