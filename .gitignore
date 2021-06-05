@@ -5,3 +5,4 @@ support/__pycache__/
 .idea/
 error_logs
 sandbox.py
+pandas_import_tutorial.py
