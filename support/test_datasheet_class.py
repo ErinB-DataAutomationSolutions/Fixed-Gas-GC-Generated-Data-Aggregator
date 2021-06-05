@@ -139,6 +139,9 @@ class TestDataSheet(ut.TestCase):
     def test_clean_data(self):
         pass
 
+    def test_transpose_data_for_single_input_column(self):
+        pass
+
 
 if __name__ == '__main__':
     ut.main()
