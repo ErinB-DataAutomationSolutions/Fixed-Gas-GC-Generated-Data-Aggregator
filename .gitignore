@@ -4,3 +4,4 @@ Export_Files/
 support/__pycache__/
 .idea/
 error_logs
+sandbox.py
