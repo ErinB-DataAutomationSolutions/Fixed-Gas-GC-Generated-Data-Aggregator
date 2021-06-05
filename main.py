@@ -9,7 +9,7 @@
 ########################################################################################################################
 
 # IMPORTS
-from support.data_upload import Config, create_sheet_obj_list, create_sheet_obj, create_export_obj, create_export_df
+from support.data_upload import Config, create_sheet_obj_list, create_export_obj, create_export_df, get_exp_col_list
 import sys
 import glob
 
@@ -22,22 +22,7 @@ def create_config_obj():
 
 
 def get_input_data_file_paths(input_data_dir, input_data_file_name) -> list:
-    return glob.glob(f'./{input_data_dir}/*/{input_data_file_name}')
-
-
-def get_exp_col_list(sheet_obj_list):
-    # Create empty export columns list
-    exp_col_list = []
-
-    # Get the data values from each sheet
-    for sheet_obj in sheet_obj_list:
-        data_map_cols = sheet_obj.data_map_vals
-
-        # Append each value to the export column list
-        for data_map_col in data_map_cols:
-            exp_col_list.append(data_map_col)
-
-    return exp_col_list
+    return glob.glob(f'./{input_data_dir}/**/{input_data_file_name}', recursive=True)
 
 
 if __name__ == "__main__":

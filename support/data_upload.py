@@ -24,11 +24,19 @@ Class Config accomplishes the following:
 2) Parsing and storing report file metadata
 
 Metadata captured from config JSON file:
-    - Data Dir:     This is the directory housing generata data sub-directories.
-    - Report Name:  This is the name of the generated report file
-    - Report Ext:   File extension of the generated report file
-    - Data Sheets:  Dictionary containing names, metadata, and import settings for Data Sheets
-    """
+    - Data Dir:             This is the directory housing generated data sub-directories.
+    - Report Name:          This is the name of the generated report file
+    - Report Ext:           File extension of the generated report file
+    - Data Sheets:          Dictionary containing names, metadata, and import settings for Data Sheets
+        - Header Bool:      Bool value indicating whether the input data has a header
+            - 1:            Header present
+            - 0:            No header present
+        - Header Name:      IF a header is present, THEN this is the name of the column headers when imported
+        - Transpose Bool:   Bool value indicates whether the data needs to be transposed
+            - 1:            Data is to be transposed
+            - 0:            Data is not to be transposed
+        - Data Map:         Dictionary mapping data label values to export data column names
+"""
 
     def __init__(self, config_file_name):
         self.config_file_name = config_file_name
@@ -254,3 +262,18 @@ def create_export_df(data_file_paths, exp_df, sheet_obj_list):
     exp_df = re_index_df(exp_df)
 
     return exp_df
+
+
+def get_exp_col_list(sheet_obj_list):
+    # Create empty export columns list
+    exp_col_list = []
+
+    # Get the data values from each sheet
+    for sheet_obj in sheet_obj_list:
+        data_map_cols = sheet_obj.data_map_vals
+
+        # Append each value to the export column list
+        for data_map_col in data_map_cols:
+            exp_col_list.append(data_map_col)
+
+    return exp_col_list
