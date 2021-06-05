@@ -135,7 +135,13 @@ class DataSheet:
         data_map_keys = []
 
         for key in self.data_map:
-            data_map_keys.append(key)
+
+            if key.isnumeric():
+                final_key = int(key)
+            else:
+                final_key = key
+
+            data_map_keys.append(final_key)
 
         return data_map_keys
 
@@ -153,6 +159,11 @@ class DataSheet:
 
     def clean_data(self, data_df: pd.DataFrame) -> pd.DataFrame:
 
+        if self.use_cols is None:
+            use_col_num = 0
+        else:
+            use_col_num = len(self.use_cols)
+
         # Drop NA values
         data_df = data_df.dropna()
 
@@ -161,15 +172,21 @@ class DataSheet:
             data_df = data_df.T.reset_index(drop=True)
 
         # Filter unwanted data
-        if len(self.use_cols) > 1:
+
+        if use_col_num is not 1:
             data_df.columns = data_df.iloc[0]                       # Set column names to equal to row 1
+        # lif self.use_cols is None:
+        #    data_df.columns = data_df.iloc[0]
 
         data_df = data_df.filter(items=self.data_map_keys, axis=1)      # Filter out all undesired columns
 
+        # print(data_df)
         data_df.columns = self.data_map_vals
 
-        if len(self.use_cols) > 1:
+        if use_col_num is not 1:
             data_df = data_df.drop(index=0).reset_index(drop=True)  # Drop the now-redundant first row
+        # elif self.use_cols is None:
+        #    data_df.columns = data_df.iloc[0]
 
         data_df = data_df.reset_index(drop=True)                # Reset Index
 
@@ -245,6 +262,7 @@ def create_export_df(data_file_paths, exp_df, sheet_obj_list):
 
         # Import data from each sheet
         for sheet_obj in sheet_obj_list:
+            # print(sheet_obj.name)
             sheet_df = sheet_obj.import_data(data_file_path)
 
             # Clean sheet data
@@ -255,6 +273,8 @@ def create_export_df(data_file_paths, exp_df, sheet_obj_list):
 
             # Clean up
             del sheet_df
+
+            # print("Import successful")
 
         # Drop the temporary column used for work-around
         temp_df = temp_df.drop(columns='temp_col')

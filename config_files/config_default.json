@@ -29,6 +29,19 @@
         "METHANE": "CH4_micro_L",
         "CARBON MONOXIDE": "CO_micro_L"
       }
+    },
+    "Peak": {
+      "headers_bool": 1,
+      "headers_nm": [
+        "Area"
+      ],
+      "transpose_bool": 1,
+      "data_map": {
+        "0": "(carbon dioxide)",
+        "4": "(oxygen)",
+        "5": "(nitrogen)",
+        "6": "(methane)"
+      }
     }
   }
 }
