@@ -15,6 +15,31 @@ import pandas as pd
 from datetime import datetime as dt
 
 
+def function_timer(function):
+
+    def function_timer_wrapper(*arg):
+        # Start timer
+        start_time = dt.now()
+
+        # Execute function being timed
+        function_return = function(*arg)
+
+        # Stop timer
+        stop_time = dt.now()
+
+        # Get time difference
+        time_diff = stop_time - start_time
+
+        # Convert timedelta into string:
+        report_time_diff = time_diff.seconds
+
+        print("Execution time: " + str(report_time_diff) + " seconds")
+
+        return function_return
+
+    return function_timer_wrapper
+
+
 # Config class
 class Config:
 
@@ -252,6 +277,7 @@ def create_export_obj(export_data_cols):
     return ExportData(export_file_name, export_data_cols)
 
 
+@function_timer
 def create_export_df(data_file_paths, exp_df, sheet_obj_list):
 
     for data_file_path in data_file_paths:

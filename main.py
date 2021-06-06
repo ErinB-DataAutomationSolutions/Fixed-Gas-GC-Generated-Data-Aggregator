@@ -56,6 +56,7 @@ if __name__ == "__main__":
     export_df = export.create_export_df()
 
     # (7) Get data in each sheet of each file:
+    print("Importing data...")
     export_df = create_export_df(input_data_file_paths, export_df, sheet_list)
     # print(export_df)
 
