@@ -96,6 +96,7 @@ Metadata captured from config JSON file:
         return f"{self.report_name}.{self.report_ext}"
 
     # If specified data sheets are listed, get data sheets
+    @property
     def data_sheets(self):
         """Store data sheets dictionary, if specified"""
         if "data_sheets" in self.config:
@@ -227,7 +228,7 @@ class ExportData:
         self.export_data_cols = export_data_cols
         # self.export_data = pd.DataFrame
 
-    def create_export_df(self):
+    def initiate_export_df(self):
         return pd.DataFrame(columns=self.export_data_cols)
 
     def export(self, export_df):
@@ -260,9 +261,9 @@ def create_sheet_obj_list(sheet_names: list, sheets_metadata_dict: dict):
     return sheet_obj_list
 
 
-def build_export_file_nm() -> str:
-    user_name = input("User Name: ")
-    export_dir = input("Export directory: ")
+def build_export_file_nm(user_name, export_dir) -> str:
+    # user_name = input("User Name: ")
+    # export_dir = input("Export directory: ")
     export_ext = "xlsx"
 
     now = dt.now()
@@ -271,9 +272,9 @@ def build_export_file_nm() -> str:
     return f"{export_dir}\\{user_name}.{dt_string}.{export_ext}"
 
 
-def create_export_obj(export_data_cols):
+def create_export_obj(export_data_cols, user_name, export_dir):
     # Build file name
-    export_file_name = build_export_file_nm()
+    export_file_name = build_export_file_nm(user_name, export_dir)
     return ExportData(export_file_name, export_data_cols)
 
 

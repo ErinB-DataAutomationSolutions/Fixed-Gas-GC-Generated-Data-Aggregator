@@ -10,6 +10,7 @@
 
 # IMPORTS
 from support.data_upload import Config, create_sheet_obj_list, create_export_obj, create_export_df, get_exp_col_list
+from support.data_agg_ui import initiate_gui
 import sys
 import glob
 
@@ -25,7 +26,11 @@ def get_input_data_file_paths(input_data_dir, input_data_file_name) -> list:
     return glob.glob(f'./{input_data_dir}/**/{input_data_file_name}', recursive=True)
 
 
-if __name__ == "__main__":
+def get_username():
+    return input("Enter Username: ")
+
+
+def main_v1():
     # (1) Get Config File Name
     try:
         config = create_config_obj()
@@ -41,7 +46,7 @@ if __name__ == "__main__":
     # print(input_data_file_paths)
 
     # (3) Get All Sheet Metadata
-    sheets_metadata = config.data_sheets()
+    sheets_metadata = config.data_sheets
     # print(sheets_metadata)
 
     # (4) Dynamically create a list of sheet objects based on config file
@@ -52,8 +57,8 @@ if __name__ == "__main__":
     # print(export_cols)
 
     # (6) Create export object and DataFrame
-    export = create_export_obj(export_cols)
-    export_df = export.create_export_df()
+    export = create_export_obj(export_cols, "ErinB", "Export_Files")
+    export_df = export.initiate_export_df()
 
     # (7) Get data in each sheet of each file:
     print("Importing data...")
@@ -62,3 +67,15 @@ if __name__ == "__main__":
 
     # (8) Export data to an xlsx file
     export.export(export_df)
+
+
+def main_v2():
+    initiate_gui()
+
+
+if __name__ == "__main__":
+    # Data Aggregator V1
+    # main_v1()
+
+    # Data Aggregator V2
+    main_v2()
