@@ -41,7 +41,7 @@ if __name__ == "__main__":
     # print(input_data_file_paths)
 
     # (3) Get All Sheet Metadata
-    sheets_metadata = config.data_sheets()
+    sheets_metadata = config.data_sheets
     # print(sheets_metadata)
 
     # (4) Dynamically create a list of sheet objects based on config file
