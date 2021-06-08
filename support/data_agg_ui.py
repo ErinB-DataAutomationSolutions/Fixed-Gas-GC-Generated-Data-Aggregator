@@ -2,7 +2,7 @@
 
 from tkinter import *
 from tkinter import filedialog, messagebox as mb
-import shutil
+# import shutil
 import os
 import easygui
 # from PIL import Image, ImageTk
@@ -85,23 +85,27 @@ class DAggUserInterface:
         self.output_directory_path = get_directory_path()
 
     def configure_settings(self):
+        print("Configuring settings...")
         config = Config(self.config_file_path)
         self.input_data_file_paths = get_input_data_file_paths(self.input_directory_path, config.full_file_name)
         self.sheet_list = create_sheet_obj_list(config.data_sheet_names, config.data_sheets)
         self.export_data_cols = get_exp_col_list(self.sheet_list)
-        pass
+        print("Settings configured!\n")
 
     def create_config_file(self):
         pass
 
     def aggregate_data(self):
+        print("Aggregating data...")
         self.export_data_obj = create_export_obj(self.export_data_cols, self.username, self.output_directory_path)
         self.export_df = self.export_data_obj.initiate_export_df()
         self.export_df = create_export_df(self.input_data_file_paths, self.export_df, self.sheet_list)
-        pass
+        print("Data aggregation complete!\n")
 
     def export_data(self):
+        print("Exporting data...")
         self.export_data_obj.export(self.export_df)
+        print("Data successfully exported to the directory below:\n" + self.output_directory_path)
 
 
 def initiate_gui():
@@ -126,4 +130,4 @@ def initiate_gui():
 
     root.mainloop()
 
-    return ui.config_file_path, ui.username, ui.input_directory_path, ui.output_directory_path
+    # return ui.config_file_path, ui.username, ui.input_directory_path, ui.output_directory_path
