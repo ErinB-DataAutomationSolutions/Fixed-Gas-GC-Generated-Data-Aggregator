@@ -25,6 +25,10 @@ def get_input_data_file_paths(input_data_dir, input_data_file_name) -> list:
     return glob.glob(f'./{input_data_dir}/**/{input_data_file_name}', recursive=True)
 
 
+def get_username():
+    return input("Enter Username: ")
+
+
 if __name__ == "__main__":
     # (1) Get Config File Name
     try:
@@ -52,8 +56,8 @@ if __name__ == "__main__":
     # print(export_cols)
 
     # (6) Create export object and DataFrame
-    export = create_export_obj(export_cols)
-    export_df = export.create_export_df()
+    export = create_export_obj(export_cols, "ErinB", "Export_Files")
+    export_df = export.initiate_export_df()
 
     # (7) Get data in each sheet of each file:
     print("Importing data...")

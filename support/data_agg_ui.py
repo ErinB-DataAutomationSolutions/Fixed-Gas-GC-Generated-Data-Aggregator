@@ -6,6 +6,13 @@ import shutil
 import os
 import easygui
 # from PIL import Image, ImageTk
+from support.data_upload import Config, create_sheet_obj_list, create_export_obj, create_export_df, get_exp_col_list
+import glob
+
+
+# METHODS
+def get_input_data_file_paths(input_data_dir, input_data_file_name) -> list:
+    return glob.glob(f'{input_data_dir}/**/{input_data_file_name}', recursive=True)
 
 
 def get_user_str_input(prompt_str):
@@ -56,27 +63,45 @@ class DAggUserInterface:
         self.config_file_path = None
         self.input_directory_path = None
         self.output_directory_path = None
+        # self.config = None
+        self.input_data_file_paths = None
+        self.export_data_obj = None
+        self.sheet_list = None
+        self.export_data_cols = None
+        self.export_df = None
 
     def get_username(self):
         self.username = get_user_str_input("Enter username")
 
     def get_config_file_path(self):
         self.config_file_path = get_file_path()
+        # print(self.config.full_file_name)
 
     def get_input_directory_path(self):
         self.input_directory_path = get_directory_path()
+        # print(self.input_data_file_paths)
 
     def get_output_directory_path(self):
         self.output_directory_path = get_directory_path()
+
+    def configure_settings(self):
+        config = Config(self.config_file_path)
+        self.input_data_file_paths = get_input_data_file_paths(self.input_directory_path, config.full_file_name)
+        self.sheet_list = create_sheet_obj_list(config.data_sheet_names, config.data_sheets)
+        self.export_data_cols = get_exp_col_list(self.sheet_list)
+        pass
 
     def create_config_file(self):
         pass
 
     def aggregate_data(self):
+        self.export_data_obj = create_export_obj(self.export_data_cols, self.username, self.output_directory_path)
+        self.export_df = self.export_data_obj.initiate_export_df()
+        self.export_df = create_export_df(self.input_data_file_paths, self.export_df, self.sheet_list)
         pass
 
     def export_data(self):
-        pass
+        self.export_data_obj.export(self.export_df)
 
 
 def initiate_gui():
@@ -95,9 +120,9 @@ def initiate_gui():
     Button(root, text="Get Username", command=ui.get_username).grid(row=25, column=2)
     Button(root, text="Get Input directory Path", command=ui.get_input_directory_path).grid(row=35, column=2)
     Button(root, text="Get Output directory path", command=ui.get_output_directory_path).grid(row=45, column=2)
-    Button(root, text="Create Config File", command=ui.create_config_file).grid(row=55, column=2)
+    Button(root, text="Config settings", command=ui.configure_settings).grid(row=55, column=2)
     Button(root, text="Aggregate Data", command=ui.aggregate_data).grid(row=65, column=2)
-    Button(root, text="Export Data", command=ui.aggregate_data).grid(row=75, column=2)
+    Button(root, text="Export Data", command=ui.export_data).grid(row=75, column=2)
 
     root.mainloop()
 
