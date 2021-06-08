@@ -1,10 +1,10 @@
 ########################################################################################################################
 #
 #   PROGRAM:            Rob's Data Grabber
-#   FILE:               main.py
+#   FILE:               test_config_class.py
 #   FILE PURPOSE:       Run main script of program
 #   Author:             Erin Bryson
-#   DATE LAST MODIFIED: 12/20/202
+#   DATE LAST MODIFIED: 6/7/21
 #
 #   DESCRIPTION:
 #       This file is used to test the Config class in library file data_upload.py
@@ -25,7 +25,7 @@ class TestConfig(ut.TestCase):
         self.config = Config(config_file)
 
     def tearDown(self) -> None:
-        pass
+        del self.config
 
     def test_data_dir(self):
         # Expected Value
