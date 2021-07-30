@@ -16,7 +16,7 @@ import unittest as ut
 from support.data_upload import Config
 
 # Set Test Variables
-config_file = "../\\config_files\\test_config.json"
+config_file = "../config_files/test_config.json"
 
 
 class TestConfig(ut.TestCase):
