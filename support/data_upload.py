@@ -40,6 +40,29 @@ def function_timer(function):
     return function_timer_wrapper
 
 
+class NewConfig:
+    def __init__(self):
+        self.file_name = None
+        self.config = None
+        self.report_name = None
+        self.report_ext = None
+        self.data_sheets_metadata = None
+        self.data_sheets_names = []
+
+    def import_config_settings(self, config_file_name: str) -> None:
+        with open(config_file_name) as config_file:
+            self.config = js.load(config_file)
+
+    def config_settings(self):
+        self.report_name = self.config["report_name"]
+        self.report_ext = self.config["report_ext"]
+        self.data_sheets_metadata = self.config["data_sheets"]
+
+        # Store datasheet names
+        for key in self.config["data_sheets"].keys():
+            self.data_sheets_names.append(key)
+
+
 # Config class
 class Config:
 
@@ -199,7 +222,7 @@ class DataSheet:
 
         # Filter unwanted data
 
-        if use_col_num is not 1:
+        if use_col_num != 1:
             data_df.columns = data_df.iloc[0]                       # Set column names to equal to row 1
         # lif self.use_cols is None:
         #    data_df.columns = data_df.iloc[0]
@@ -209,7 +232,7 @@ class DataSheet:
         # print(data_df)
         data_df.columns = self.data_map_vals
 
-        if use_col_num is not 1:
+        if use_col_num != 1:
             data_df = data_df.drop(index=0).reset_index(drop=True)  # Drop the now-redundant first row
         # elif self.use_cols is None:
         #    data_df.columns = data_df.iloc[0]

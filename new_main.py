@@ -13,9 +13,13 @@ import tkinter as tk
 import getpass
 from typing import Callable
 import support.gui_builder as ngb
+from support.data_upload import \
+    NewConfig, \
+    create_sheet_obj_list
 from tkinter import filedialog as fd
 from tkinter import messagebox
 import glob
+import pandas as pd
 
 
 ########################################################################################################################
@@ -54,7 +58,7 @@ def stubbing_func(stub_message: str) -> None:
 
 
 def get_input_data_file_paths(input_data_dir, input_data_file_name) -> list:
-    return glob.glob(f'./{input_data_dir}/**/{input_data_file_name}', recursive=True)
+    return glob.glob(f'{input_data_dir}/**/{input_data_file_name}', recursive=True)
 
 
 ########################################################################################################################
@@ -124,6 +128,37 @@ class InputFormUI:
         self.output_dir_path_str = output_dir_path
 
 
+class DataFiles:
+    def __init__(self):
+        self.root_path = None
+        self.data_file_paths = None
+        self.file_count = None
+
+    def set_root_path(self, root_path, input_data_file_name):
+        self.root_path = root_path
+        self.data_file_paths = get_input_data_file_paths(root_path, input_data_file_name)
+        self.file_count = len(self.data_file_paths)
+
+
+class DataAggregator:
+    def __init__(self):
+        self.sheet_objects = None
+        self.export_df_columns = None
+        self.export_df = None
+
+    def set_sheet_objects(self, config_object):
+        self.sheet_objects = create_sheet_obj_list(config_object.data_sheet_names, config_object.data_sheets)
+
+    def create_export_df(self):
+        self.export_df = pd.DataFrame(columns=self.export_df_columns)
+
+    def import_data(self):
+        pd.DataFrame(columns=self.export_df_columns)
+
+    def export_data(self):
+        pass
+
+
 ########################################################################################################################
 #                                                  BUILD GUI                                                           #
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -138,6 +173,10 @@ global_string_var = tk.StringVar()
 global_string_var.set("")
 
 global_int_var = tk.IntVar()
+
+config = NewConfig()
+
+data_files = DataFiles()
 
 # -------------------------------------------------------------------------------------------------------------------- #
 #                                                  Create screens                                                      #
@@ -615,9 +654,22 @@ def build_screen_dagg_input_confirmation():
     )
 
     def confirm():
+        # Import config settings
+        config.import_config_settings(input_form_ui.config_file_path_str)
+
+        # Configure settings
+        config.config_settings()
+
+        print(input_form_ui.input_dir_path_str)
+
+        # Get Files
+        data_files.set_root_path(
+            input_form_ui.input_dir_path_str,
+            f"{config.report_name}.{config.report_ext}"
+        )
+
         # Set global int var to total number of files
-        # NOTE: The below value is a dummy value
-        global_int_var.set(10)
+        global_int_var.set(data_files.file_count)
         global_string_var.set(f"0 out of {global_int_var.get()} files uploaded...")
 
         application.update_idletasks()
