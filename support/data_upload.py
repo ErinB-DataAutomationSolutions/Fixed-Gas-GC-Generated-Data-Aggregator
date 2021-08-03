@@ -1,119 +1,68 @@
 ########################################################################################################################
-#
-#   PROGRAM:            Rob's Data Grabber
-#   FILE:               data_upload.py
-#   FILE PURPOSE:       Library for interacting with and extracting data from Data Sheets
-#   Author:             Erin Bryson
-#   DATE LAST MODIFIED: 06/02/2021
-#
+#                                               FILE DETAILS                                                           #
+# -------------------------------------------------------------------------------------------------------------------- #
+# PROGRAM:  Fixed Gas Data Aggregator                                                                                  #
+# Author:   Erin Bryson                                                                                                #
 ########################################################################################################################
 
+########################################################################################################################
+#                                                   Imports                                                            #
+# -------------------------------------------------------------------------------------------------------------------- #
 
-# IMPORTS
 import json as js
 import pandas as pd
-from datetime import datetime as dt
+import glob
+from typing import Callable
 
 
-def function_timer(function):
-
-    def function_timer_wrapper(*arg):
-        # Start timer
-        start_time = dt.now()
-
-        # Execute function being timed
-        function_return = function(*arg)
-
-        # Stop timer
-        stop_time = dt.now()
-
-        # Get time difference
-        time_diff = stop_time - start_time
-
-        # Convert timedelta into string:
-        report_time_diff = time_diff.seconds
-
-        print("Execution time: " + str(report_time_diff) + " seconds")
-
-        return function_return
-
-    return function_timer_wrapper
+########################################################################################################################
+#                                                  GLOBAL FUNCTIONS                                                    #
+# -------------------------------------------------------------------------------------------------------------------- #
+def re_index_df(df):
+    return df.reset_index(drop=True)
 
 
-# Config class
+def add_data_row(export_df: pd.DataFrame, temp_data: pd.DataFrame):
+    return pd.concat([export_df, temp_data])
+
+
+def get_input_data_file_paths(input_data_dir, input_data_file_name) -> list:
+    return glob.glob(f'{input_data_dir}/**/{input_data_file_name}', recursive=True)
+
+########################################################################################################################
+#                                                       CLASSES                                                        #
+# -------------------------------------------------------------------------------------------------------------------- #
+
+
 class Config:
+    def __init__(self):
+        self._config = None
 
-    """
-Class Config accomplishes the following:
-1) Reading and parsing a user-defined Config file
-2) Parsing and storing report file metadata
-
-Metadata captured from config JSON file:
-    - Data Dir:             This is the directory housing generated data sub-directories.
-    - Report Name:          This is the name of the generated report file
-    - Report Ext:           File extension of the generated report file
-    - Data Sheets:          Dictionary containing names, metadata, and import settings for Data Sheets
-        - Header Bool:      Bool value indicating whether the input data has a header
-            - 1:            Header present
-            - 0:            No header present
-        - Header Name:      IF a header is present, THEN this is the name of the column headers when imported
-        - Transpose Bool:   Bool value indicates whether the data needs to be transposed
-            - 1:            Data is to be transposed
-            - 0:            Data is not to be transposed
-        - Data Map:         Dictionary mapping data label values to export data column names
-"""
-
-    def __init__(self, config_file_name):
-        self.config_file_name = config_file_name
+        self.file_name = None
+        self.report_name = None
+        self.report_ext = None
+        self.datasheets_metadata = None
+        self.datasheets_names = []
 
     @property
     def config(self):
-        """Open and read config file"""
-        with open(self.config_file_name) as config_file:
-            return js.load(config_file)
+        return self._config
 
-    @property
-    def input_data_dir(self):
-        """Store data dir metadata"""
-        return self.config["data_dir"]
+    @config.setter
+    def config(self, config_file_name: str) -> None:
+        with open(config_file_name) as config_file:
+            self._config = js.load(config_file)
 
-    # Set Report Name
-    @property
-    def report_name(self):
-        """Store report file name metadata"""
-        return self.config["report_name"]
+    def config_settings(self):
+        self.report_name = self.config["report_name"]
+        self.report_ext = self.config["report_ext"]
+        self.datasheets_metadata = self.config["data_sheets"]
 
-    # Set Report Extension
-    @property
-    def report_ext(self):
-        """Store report file extension"""
-        return self.config["report_ext"]
-
-    # Set file name
-    @property
-    def full_file_name(self):
-        """Construct full report file name"""
-        return f"{self.report_name}.{self.report_ext}"
-
-    # If specified data sheets are listed, get data sheets
-    @property
-    def data_sheets(self):
-        """Store data sheets dictionary, if specified"""
-        if "data_sheets" in self.config:
-            return self.config["data_sheets"]
-
-    # Store names of data sheets
-    @property
-    def data_sheet_names(self):
-        names_list = []
-
+        # Store datasheet names
         for key in self.config["data_sheets"].keys():
-            names_list.append(key)
-
-        return names_list
+            self.datasheets_names.append(key)
 
 
-# Class housing data sheet info
 class DataSheet:
     def __init__(self, name: str, sheet_dict: dict):
         self.name = name
@@ -148,7 +97,7 @@ class DataSheet:
                 return self.sheet_dict["headers_nm"]
             except KeyError:
                 print("ERROR! Use Cols list missing from config file!")
-                # Need to pass error to prevent data import attempt
+                return KeyError
         return None
 
     # Get row data map if specified
@@ -172,13 +121,13 @@ class DataSheet:
         return data_map_keys
 
     @property
-    def data_map_vals(self):
-        data_map_vals = []
+    def data_map_values(self):
+        data_map_values = []
 
         for key in self.data_map:
-            data_map_vals.append(self.data_map[key])
+            data_map_values.append(self.data_map[key])
 
-        return data_map_vals
+        return data_map_values
 
     def import_data(self, file_name) -> pd.DataFrame:
         return pd.read_excel(file_name, sheet_name=self.name, header=self.header, usecols=self.use_cols)
@@ -197,103 +146,97 @@ class DataSheet:
         if self.transpose_bool:
             data_df = data_df.T.reset_index(drop=True)
 
-        # Filter unwanted data
 
         if use_col_num != 1:
-            data_df.columns = data_df.iloc[0]                       # Set column names to equal to row 1
-        # lif self.use_cols is None:
-        #    data_df.columns = data_df.iloc[0]
+            # Set column names to equal to row 1
+            data_df.columns = data_df.iloc[0]
 
-        data_df = data_df.filter(items=self.data_map_keys, axis=1)      # Filter out all undesired columns
+        # Filter out all undesired columns
+        data_df = data_df.filter(items=self.data_map_keys, axis=1)
 
         # print(data_df)
-        data_df.columns = self.data_map_vals
+        data_df.columns = self.data_map_values
 
         if use_col_num != 1:
-            data_df = data_df.drop(index=0).reset_index(drop=True)  # Drop the now-redundant first row
-        # elif self.use_cols is None:
-        #    data_df.columns = data_df.iloc[0]
+            # Drop the now-redundant first row
+            data_df = data_df.drop(index=0).reset_index(drop=True)
 
-        data_df = data_df.reset_index(drop=True)                # Reset Index
+        # Reset Index
+        data_df = data_df.reset_index(drop=True)
 
-        data_df.columns = self.data_map_vals
+        data_df.columns = self.data_map_values
 
         return data_df
 
 
-class ExportData:
+class DataImporter:
 
-    def __init__(self, export_data_file_path, export_data_cols):
-        self.export_data_file_path = export_data_file_path
-        self.export_data_cols = export_data_cols
-        # self.export_data = pd.DataFrame
+    def __init__(self):
+        self._config = None
+        self._root_path = ""
 
-    def initiate_export_df(self):
-        return pd.DataFrame(columns=self.export_data_cols)
+        self.import_file_path_list = None
+        self.data_map = {}
+        self.agg_data_df_cols = []
+        self.datasheet_object_list = []
+        self.agg_data_df = None
+        self.file_count = None
 
-    def export(self, export_df):
-        # self.export_data.to_excel(f"{self.export_file_nm}.{self.export_file_ext}")
-        export_df.to_excel(self.export_data_file_path)
+    @property
+    def config(self):
+        return self._config
 
+    @config.setter
+    def config(self, config: "Config"):
+        self._config = config
 
-def re_index_df(df):
-    return df.reset_index(drop=True)
+    @property
+    def root_path(self):
+        return self._root_path
 
+    @root_path.setter
+    def root_path(self, root_path):
+        self._root_path = root_path
 
-def add_data_row(export_df: pd.DataFrame, temp_data: pd.DataFrame):
-    return pd.concat([export_df, temp_data])
+    def config_import_settings(self):
 
+        self.import_file_path_list = get_input_data_file_paths(
+            self.root_path,
+            f"{self.config.report_name}.{self.config.report_ext}"
+        )
 
-def create_sheet_obj(config_sheets_metadata, sheet_name):
-    sheet_metadata = config_sheets_metadata[sheet_name]
-    return DataSheet(sheet_name, sheet_metadata)
+        self.file_count = len(self.import_file_path_list)
 
+        # Populate sheet_obj_list with constructed sheet objects
+        for datasheet_name in self.config.datasheets_names:
 
-def create_sheet_obj_list(sheet_names: list, sheets_metadata_dict: dict):
-    # Create empty object list
-    sheet_obj_list = []
+            # Get metadata for specific sheet
+            datasheet_metadata = self.config.datasheets_metadata[datasheet_name]
 
-    # Populate sheet_obj_list with constructed sheet objects
-    for sheet_name in sheet_names:
-        sheet_obj = create_sheet_obj(sheets_metadata_dict, sheet_name)
-        sheet_obj_list.append(sheet_obj)
+            # Create a datasheet object for each datasheet
+            sheet_obj = DataSheet(datasheet_name, datasheet_metadata)
 
-    return sheet_obj_list
+            # Build list of aggregated data DataFrame columns
+            for data_map_value in sheet_obj.data_map_values:
+                self.agg_data_df_cols.append(data_map_value)
 
+            # Add datasheet object to the list of datasheets
+            self.datasheet_object_list.append(sheet_obj)
 
-def build_export_file_nm(user_name, export_dir) -> str:
-    # user_name = input("User Name: ")
-    # export_dir = input("Export directory: ")
-    export_ext = "xlsx"
+        self.agg_data_df = pd.DataFrame(columns=self.agg_data_df_cols)
 
-    now = dt.now()
-    dt_string = now.strftime("%m%d%Y.%H%M%S")
-
-    return f"{export_dir}\\{user_name}.{dt_string}.{export_ext}"
-
-
-def create_export_obj(export_data_cols, user_name, export_dir):
-    # Build file name
-    export_file_name = build_export_file_nm(user_name, export_dir)
-    return ExportData(export_file_name, export_data_cols)
-
-
-@function_timer
-def create_export_df(data_file_paths, exp_df, sheet_obj_list):
-
-    for data_file_path in data_file_paths:
-
+    def concat_import_data(self, data_file_path):
         # Create an empty DataFrame to store input data
         # NOTE: Creating an empty DataFrame with a column allows data to be appended below
         temp_df = pd.DataFrame({'temp_col': []})
 
         # Import data from each sheet
-        for sheet_obj in sheet_obj_list:
+        for datasheet_object in self.datasheet_object_list:
             # print(sheet_obj.name)
-            sheet_df = sheet_obj.import_data(data_file_path)
+            sheet_df = datasheet_object.import_data(data_file_path)
 
             # Clean sheet data
-            sheet_df = sheet_obj.clean_data(sheet_df)
+            sheet_df = datasheet_object.clean_data(sheet_df)
 
             # Add imported data to new data row
             temp_df = pd.concat([temp_df, sheet_df], axis=1)
@@ -301,32 +244,66 @@ def create_export_df(data_file_paths, exp_df, sheet_obj_list):
             # Clean up
             del sheet_df
 
-            # print("Import successful")
-
         # Drop the temporary column used for work-around
         temp_df = temp_df.drop(columns='temp_col')
 
         # Add new data row
-        exp_df = add_data_row(exp_df, temp_df)
+        self.agg_data_df = add_data_row(self.agg_data_df, temp_df)
 
         # Clean up
         del temp_df
 
-    exp_df = re_index_df(exp_df)
+    def aggregate_data(self, status_message_func: Callable = None, download_button=None, progress_bar=None):
+        progress_num = 0
 
-    return exp_df
+        # progress_bar['maximum'] = self.file_count
+
+        if progress_bar:
+            progress_bar['maximum'] = self.file_count
+
+        for data_file_path in self.import_file_path_list:
+            # Concat datasheet data
+            self.concat_import_data(data_file_path)
+
+            # Increment file_counter by 1
+            progress_num += 1
+
+            # Pass file number into Callable Status Message Function
+            if status_message_func:
+                status_message_func(progress_num)
+
+        # Re-Index Aggregated Data
+        self.agg_data_df = re_index_df(self.agg_data_df)
+
+        download_button['state'] = 'active'
 
 
-def get_exp_col_list(sheet_obj_list):
-    # Create empty export columns list
-    exp_col_list = []
+class DataExporter:
 
-    # Get the data values from each sheet
-    for sheet_obj in sheet_obj_list:
-        data_map_cols = sheet_obj.data_map_vals
+    def __init__(self, export_df, export_data_full_file_name):
+        self.export_df = export_df
+        self.export_data_full_file_name = export_data_full_file_name
 
-        # Append each value to the export column list
-        for data_map_col in data_map_cols:
-            exp_col_list.append(data_map_col)
+        # Fine position of final "."
+        ext_start_pos = self.export_data_full_file_name.rfind(".")
 
-    return exp_col_list
+        # Get the file extension
+        file_ext = self.export_data_full_file_name[ext_start_pos + 1:]
+
+        # IF file extension is supported, set the file_ext property value
+        if file_ext in self.supported_ext.keys():
+            self.file_ext = file_ext
+
+    @property
+    def supported_ext(self):
+        return {
+            "xlsx": self.export_df.to_excel,
+            "csv": self.export_df.to_csv
+        }
+
+    def export(self):
+        self.supported_ext[self.file_ext](self.export_data_full_file_name)
+
+########################################################################################################################
+#                                                       END FILE                                                       #
+########################################################################################################################
