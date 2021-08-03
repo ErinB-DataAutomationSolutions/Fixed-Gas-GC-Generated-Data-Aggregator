@@ -302,7 +302,7 @@ def create_export_obj(export_data_cols, user_name, export_dir):
 
 
 @function_timer
-def create_export_df(data_file_paths, exp_df, sheet_obj_list):
+def create_export_df(data_file_paths: list, exp_df: "pd.DataFrame", sheet_obj_list: list):
 
     for data_file_path in data_file_paths:
 
@@ -346,7 +346,7 @@ def get_exp_col_list(sheet_obj_list):
 
     # Get the data values from each sheet
     for sheet_obj in sheet_obj_list:
-        data_map_cols = sheet_obj.data_map_vals
+        data_map_cols = sheet_obj.data_map_values
 
         # Append each value to the export column list
         for data_map_col in data_map_cols:

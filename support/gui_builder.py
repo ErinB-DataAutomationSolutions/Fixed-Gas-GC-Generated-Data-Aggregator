@@ -21,21 +21,14 @@ This class builds widgets based on type, and stores placement settings.
         self.handler = master.handler
 
         # Create widget
-        self.widget_object = widget_type(
-            master,
-            cnf=options
-        )
+        self.widget_object = widget_type(master)
 
-        self.options = options
+        # Add all options ot the widget object
+        for option in options:
+            self.widget_object[option] = options[option]
 
         # Placeholders:
         self.placement_settings = {}
-
-    def create_element(self):
-        return self.widget_type(
-            master=self.master,
-            cnf=self.options
-        )
 
     def set_placement_settings(self, **placement_settings: [str, Any]) -> None:
         """
@@ -43,7 +36,8 @@ This class builds widgets based on type, and stores placement settings.
         :param placement_settings: Placement Settings Dictionary
         :return: None
         """
-        self.placement_settings = placement_settings
+        for placement_setting in placement_settings:
+            self.placement_settings[placement_setting] = placement_settings[placement_setting]
 
     def set_next_screen_command(self, next_screen: "ScreenContainer") -> None:
         """
