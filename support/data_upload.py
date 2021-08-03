@@ -146,6 +146,7 @@ class DataSheet:
         if self.transpose_bool:
             data_df = data_df.T.reset_index(drop=True)
 
+
         if use_col_num != 1:
             # Set column names to equal to row 1
             data_df.columns = data_df.iloc[0]
