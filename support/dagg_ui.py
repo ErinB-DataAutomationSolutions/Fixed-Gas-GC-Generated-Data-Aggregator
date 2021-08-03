@@ -1,25 +1,14 @@
 ########################################################################################################################
-#                                               FILE DETAILS                                                           #
-# -------------------------------------------------------------------------------------------------------------------- #
-# PROGRAM:  Fixed Gas Data Aggregator                                                                                  #
-# Author:   Arin Bryson                                                                                                #
-########################################################################################################################
-
-########################################################################################################################
 #                                                   Imports                                                            #
 # -------------------------------------------------------------------------------------------------------------------- #
 
 import tkinter as tk
-import getpass
 from typing import Callable
-import support.gui_builder as ngb
-from support.data_upload import \
-    NewConfig
+import support.gui_builder as gb
 from tkinter import filedialog as fd
 from tkinter import messagebox
 from tkinter import ttk
-import glob
-import time
+import support.data_upload as du
 
 
 ########################################################################################################################
@@ -53,84 +42,49 @@ def get_dir_path() -> fd.askdirectory:
     return fd.askdirectory()
 
 
-def stub_func_message(stub_message: str) -> None:
-    print(stub_message)
-
-
-def stub_file_upload_progress(file_count, status_message_func=None, download_button=None, progress_bar=None):
-    progress_num = 0
-
-    if progress_bar:
-        progress_bar['maximum'] = file_count
-
-    while progress_num < file_count:
-        # Halt program for half a second
-        time.sleep(0.1)
-
-        # Increase progress number by 1
-        progress_num += 1
-
-        # Execute status message function
-        if status_message_func:
-            status_message_func(progress_num)
-
-    if download_button:
-        download_button['state'] = tk.ACTIVE
-        application.update_idletasks()
-
-
-def save_file():
-    file_name = fd.asksaveasfilename(
+def save_file(export_df):
+    # Prompt user to set full file name
+    export_data_full_file_name = fd.asksaveasfilename(
         defaultextension='.xlsx',
         filetypes=(
             ("Excel files", "*.xlsx"),
             ("CSV Files", "*.csv")
         )
     )
-    print(file_name)
 
+    # Create a data exporter object with the export_df and acquired full file name
+    data_exporter = du.DataExporter(export_df, export_data_full_file_name)
 
-def get_input_data_file_paths(input_data_dir, input_data_file_name) -> list:
-    return glob.glob(f'{input_data_dir}/**/{input_data_file_name}', recursive=True)
+    # Export data
+    data_exporter.export()
 
 
 ########################################################################################################################
 #                                                       CLASSES                                                        #
 # -------------------------------------------------------------------------------------------------------------------- #
-
 class InputFormUI:
-
+    """
+This class handles the user input gathered from the Data Aggregator Input Form screen
+"""
     def __init__(self):
-        # Set the default username
-        self.default_user_name = getpass.getuser()
 
         # Set error bool values
         self.config_file_path_input_error = False
         self.input_dir_input_error = False
 
+        self._config_file_path_str = ""
+        self._input_dir_path_str = ""
+
         # Set placeholders
-        self.username_str = None
-        self.config_file_path_str = None
-        self.input_dir_path_str = None
         self.output_dir_path_str = None
 
-    def set_username(self, entry: "tk.Entry"):
-        username_str = entry.get()
+    @property
+    def config_file_path_str(self):
+        return self._config_file_path_str
 
-        # If input string is empty:
-        #   - Set username to default username
-        #   - return
-        if username_str == "":
-            self.username_str = self.default_user_name
-            return
-
-        # ELSE:
-        #   - Set username as input string
-        #   - return
-        self.username_str = username_str
-
-    def set_config_file_path(self, entry: "tk.Entry"):
-        config_file_path_str = entry.get()
+    @config_file_path_str.setter
+    def config_file_path_str(self, entry_str: str):
+        config_file_path_str = entry_str
 
         # IF the config file path input string is empty:
         #   -
@@ -139,38 +93,22 @@ class InputFormUI:
             return
 
         # ELSE
-        self.config_file_path_str = config_file_path_str
+        self._config_file_path_str = config_file_path_str
 
-    def set_input_dir_path(self, entry: "tk.Entry"):
-        input_dir_path_str = entry.get()
+    @property
+    def input_dir_path_str(self):
+        return self._input_dir_path_str
+
+    @input_dir_path_str.setter
+    def input_dir_path_str(self, entry_str: str):
+        input_dir_path_str = entry_str
 
         # IF the input dir entry is missing, raise an error!
         if input_dir_path_str == "":
             self.input_dir_input_error = True
             return
 
-        self.input_dir_path_str = input_dir_path_str
-
-    def set_output_dir_path(self, entry: "tk.Entry"):
-        output_dir_path = entry.get()
-
-        if output_dir_path == "":
-            self.output_dir_path_str = f"C:\\Users\\{self.default_user_name}\\Documents\\"
-            return
-
-        self.output_dir_path_str = output_dir_path
-
-
-class DataFiles:
-    def __init__(self):
-        self.root_path = None
-        self.data_file_paths = None
-        self.file_count = None
-
-    def set_root_path(self, root_path, input_data_file_name):
-        self.root_path = root_path
-        self.data_file_paths = get_input_data_file_paths(root_path, input_data_file_name)
-        self.file_count = len(self.data_file_paths)
+        self._input_dir_path_str = input_dir_path_str
 
 
 ########################################################################################################################
@@ -181,95 +119,47 @@ class DataFiles:
 input_form_ui = InputFormUI()
 
 # Create an instance of the application
-application = ngb.Application()
+application = gb.Application()
 
+# Global string var to be used throughout program
 global_string_var = tk.StringVar()
 global_string_var.set("")
 
+# Global IntVar to be used throughout program
 global_int_var = tk.IntVar()
 
-config = NewConfig()
+# Create Config Object
+new_config = du.Config()
 
-data_files = DataFiles()
+# Create Data Importer object
+data_importer = du.DataImporter()
 
 # -------------------------------------------------------------------------------------------------------------------- #
 #                                                  Create screens                                                      #
 # -------------------------------------------------------------------------------------------------------------------- #
 
 # Start Screen
-screen_start = ngb.ScreenContainer(application, True)
+screen_start = gb.ScreenContainer(application, True)
 
 # Data Aggregator Config Form Screen
-screen_dagg_config_form = ngb.ScreenContainer(application)
+screen_dagg_config_form = gb.ScreenContainer(application)
 
 # Data Aggregator Confirmation Screen
-screen_dagg_input_confirmation = ngb.ScreenContainer(application)
+screen_dagg_input_confirmation = gb.ScreenContainer(application)
 
 # Data Aggregator Importing Loading Screen
-screen_data_import = ngb.ScreenContainer(application)
+screen_data_import = gb.ScreenContainer(application)
 
 #  Config File Builder Screen
-screen_config_file_builder = ngb.ScreenContainer(application)
+screen_config_file_builder = gb.ScreenContainer(application)
 
 # Create Help Screen
-screen_help = ngb.ScreenContainer(application)
+screen_help = gb.ScreenContainer(application)
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
 #                                                    Build Screens                                                     #
 # -------------------------------------------------------------------------------------------------------------------- #
-def build_screen_start():
-    """
-    Build out the Start Screen
-    :return:
-    """
-    # Build title label
-    screen_start.build_title_label(
-        text="Fixed Gas GC Data Aggregator",
-        font=(
-            'arial',
-            15,
-            'bold'
-        )
-    )
-
-    # Create a Start Menu child container
-    child_container_start_menu = ngb.OldChildContainer(
-        screen_start,
-        orient=tk.VERTICAL
-    )
-
-    child_container_start_menu.set_pack_options(
-        pady=10
-    )
-
-    # Add button leading to Data Aggregator Form screen
-    child_container_start_menu.build_new_screen_button(
-        screen_dagg_config_form,
-        text="Aggregate Data"
-    )
-
-    # Add button leading to Config File Builder
-    child_container_start_menu.build_new_screen_button(
-        screen_config_file_builder,
-        text="Build Config File"
-    )
-
-    # Add button leading to Help screen
-    child_container_start_menu.build_new_screen_button(
-        screen_help,
-        text="Help"
-    )
-
-    button_quit = tk.Button(
-        child_container_start_menu,
-        text="Quit",
-        command=lambda: application.close_application()
-    )
-
-    child_container_start_menu.add_elements(button_quit)
-
-
 def new_build_screen_start():
     # Build title label
     screen_start.build_title_label(
@@ -281,12 +171,12 @@ def new_build_screen_start():
         )
     )
 
-    child_container_start_menu = ngb.ChildContainer(
+    child_container_start_menu = gb.ChildContainer(
         screen_start
     )
 
     # Button for Data Aggregator Config Form
-    button_screen_dagg_config_form = ngb.WidgetBuilder(
+    button_screen_dagg_config_form = gb.WidgetBuilder(
         child_container_start_menu,
         tk.Button,
         text="Aggregate Data",
@@ -298,7 +188,7 @@ def new_build_screen_start():
     child_container_start_menu.new_build_row(button_screen_dagg_config_form)
 
     # Button for Config File Builder
-    button_screen_config_file_builder = ngb.WidgetBuilder(
+    button_screen_config_file_builder = gb.WidgetBuilder(
         child_container_start_menu,
         tk.Button,
         text="Build Config File",
@@ -310,7 +200,7 @@ def new_build_screen_start():
     child_container_start_menu.new_build_row(button_screen_config_file_builder)
 
     # Button for Help Screen
-    button_screen_help = ngb.WidgetBuilder(
+    button_screen_help = gb.WidgetBuilder(
         child_container_start_menu,
         tk.Button,
         text="Help",
@@ -322,7 +212,7 @@ def new_build_screen_start():
     child_container_start_menu.new_build_row(button_screen_help)
 
     # Button Quit
-    button_quit = ngb.WidgetBuilder(
+    button_quit = gb.WidgetBuilder(
         child_container_start_menu,
         tk.Button,
         text="Quit",
@@ -344,7 +234,7 @@ def build_screen_help():
         )
     )
 
-    child_container_help_messages = ngb.ChildContainer(
+    child_container_help_messages = gb.ChildContainer(
         screen_help
     )
 
@@ -353,7 +243,7 @@ def build_screen_help():
     child_container_help_messages.config_column(0, weight=1)
 
     # LabelFrame for Data Aggregator help section
-    labelframe_data_aggregator = ngb.WidgetBuilder(
+    labelframe_data_aggregator = gb.WidgetBuilder(
         child_container_help_messages,
         tk.LabelFrame,
         text="Data Aggregator"
@@ -374,7 +264,7 @@ def build_screen_help():
 
     child_container_help_messages.new_build_row(labelframe_data_aggregator)
 
-    labelframe_config_file_builder = ngb.WidgetBuilder(
+    labelframe_config_file_builder = gb.WidgetBuilder(
         child_container_help_messages,
         tk.LabelFrame,
         text="Config File Builder"
@@ -399,87 +289,6 @@ def build_screen_help():
     screen_help.build_back_button(screen_start)
 
 
-def build_screen_dagg_config_form():
-    # Build Title label
-    screen_dagg_config_form.build_title_label(
-        text="Data Aggregator: Configuration Settings",
-        font=(
-            'arial',
-            15,
-            'bold'
-        )
-    )
-
-    screen_dagg_config_form.columnconfigure(0, weight=1)
-    screen_dagg_config_form.columnconfigure(1, weight=3)
-    screen_dagg_config_form.columnconfigure(2, weight=1)
-
-    # Create Child Container for Output Directory form row
-    child_container_output_dir_row = ngb.OldChildContainer(screen_dagg_config_form)
-    # Configure columns
-    child_container_output_dir_row.columnconfigure(0, weight=1)
-    child_container_output_dir_row.columnconfigure(1, weight=3)
-    child_container_output_dir_row.columnconfigure(2, weight=1)
-
-    child_container_output_dir_row.set_pack_options(fill=tk.X)
-
-    label_output_dir = tk.Label(
-        child_container_output_dir_row,
-        text="Output Dir: "
-    )
-
-    entry_output_dir = tk.Entry(
-        child_container_output_dir_row
-    )
-
-    entry_output_dir.pack(fill=tk.X)
-
-    button_output_dir_row = tk.Button(
-        child_container_output_dir_row,
-        text="Browse",
-        command=lambda: print("Browse directories")
-    )
-
-    child_container_output_dir_row.add_elements(
-        label_output_dir,
-        entry_output_dir,
-        button_output_dir_row
-    )
-
-    # Create child container for the Submit and Cancel buttons
-    child_container_end_form = ngb.OldChildContainer(screen_dagg_config_form)
-    child_container_end_form.set_pack_options(
-        side=tk.RIGHT
-    )
-
-    button_clear = tk.Button(
-        child_container_end_form,
-        text="Clear"
-    )
-
-    button_clear.pack(
-        padx=10,
-        pady=10
-    )
-
-    button_submit = tk.Button(
-        child_container_end_form,
-        text="Submit"
-    )
-
-    button_submit.pack(
-        padx=10,
-        pady=10
-    )
-
-    child_container_end_form.add_elements(
-        button_clear,
-        button_submit
-    )
-
-    screen_dagg_config_form.build_back_button(screen_start)
-
-
 def new_build_screen_dagg_config_form():
     # Build the Screen Title
     screen_dagg_config_form.build_title_label(
@@ -493,7 +302,7 @@ def new_build_screen_dagg_config_form():
 
     # CHILD CONTAINER 1: FORM ENTRY
     # Create a child container for the Form entry
-    child_container_form_input = ngb.ChildContainer(screen_dagg_config_form)
+    child_container_form_input = gb.ChildContainer(screen_dagg_config_form)
     child_container_form_input.set_pack_options(fill=tk.X)
 
     # Column configure
@@ -501,7 +310,7 @@ def new_build_screen_dagg_config_form():
 
     # ROW 1: CONFIG FILE
     # Label
-    label_config_file = ngb.WidgetBuilder(
+    label_config_file = gb.WidgetBuilder(
         child_container_form_input,
         tk.Label,
         text="Config File:"
@@ -510,7 +319,7 @@ def new_build_screen_dagg_config_form():
     label_config_file.set_placement_settings(sticky="e")
 
     # Entry
-    entry_config_file = ngb.WidgetBuilder(
+    entry_config_file = gb.WidgetBuilder(
         child_container_form_input,
         tk.Entry
     )
@@ -518,7 +327,7 @@ def new_build_screen_dagg_config_form():
     entry_config_file.set_placement_settings(sticky="ew")
 
     # Button
-    button_config_file = ngb.WidgetBuilder(
+    button_config_file = gb.WidgetBuilder(
         child_container_form_input,
         tk.Button,
         text="Browse",
@@ -536,7 +345,7 @@ def new_build_screen_dagg_config_form():
 
     # ROW 2: INPUT DIRECTORY
     # Label
-    label_input_directory = ngb.WidgetBuilder(
+    label_input_directory = gb.WidgetBuilder(
         child_container_form_input,
         tk.Label,
         text="Input Folder:"
@@ -545,7 +354,7 @@ def new_build_screen_dagg_config_form():
     label_input_directory.set_placement_settings(sticky="e")
 
     # Entry
-    entry_input_directory = ngb.WidgetBuilder(
+    entry_input_directory = gb.WidgetBuilder(
         child_container_form_input,
         tk.Entry
     )
@@ -553,7 +362,7 @@ def new_build_screen_dagg_config_form():
     entry_input_directory.set_placement_settings(sticky="ew")
 
     # Button
-    button_input_directory = ngb.WidgetBuilder(
+    button_input_directory = gb.WidgetBuilder(
         child_container_form_input,
         tk.Button,
         text="Browse",
@@ -570,7 +379,7 @@ def new_build_screen_dagg_config_form():
     )
 
     # CHILD CONTAINER 2: END FORM
-    child_container_form_end = ngb.ChildContainer(
+    child_container_form_end = gb.ChildContainer(
         screen_dagg_config_form
     )
 
@@ -582,7 +391,6 @@ def new_build_screen_dagg_config_form():
     # Button: Clear
     def clear():
         # Clear stored UI values:
-        input_form_ui.username_str = None
         input_form_ui.config_file_path_str = None
         input_form_ui.input_dir_path_str = None
 
@@ -590,9 +398,9 @@ def new_build_screen_dagg_config_form():
         entry_config_file.widget_object.delete(0, tk.END)
         entry_input_directory.widget_object.delete(0, tk.END)
 
-        print("Form Cleared!")
+        print("Form was cleared!")
 
-    button_end_form_clear = ngb.WidgetBuilder(
+    button_end_form_clear = gb.WidgetBuilder(
         child_container_form_end,
         tk.Button,
         text="Clear",
@@ -608,8 +416,8 @@ def new_build_screen_dagg_config_form():
         input_form_ui.input_dir_input_error = False
 
         # Set Input Form UI Variables
-        input_form_ui.set_config_file_path(entry_config_file.widget_object)
-        input_form_ui.set_input_dir_path(entry_input_directory.widget_object)
+        input_form_ui.config_file_path_str = entry_config_file.widget_object.get()
+        input_form_ui.input_dir_path_str = entry_input_directory.widget_object.get()
 
         # Check if all required entries were filled
         if input_form_ui.config_file_path_input_error or input_form_ui.input_dir_input_error:
@@ -624,7 +432,6 @@ def new_build_screen_dagg_config_form():
 
         # Store the input values to the global_string_var
         global_string_var.set(
-            f"\nUsername:\t{input_form_ui.username_str}"
             f"\nConfig File:\t{input_form_ui.config_file_path_str}"
             f"\nInput Folder:\t{input_form_ui.input_dir_path_str}"
         )
@@ -632,12 +439,12 @@ def new_build_screen_dagg_config_form():
         application.update_idletasks()
 
         # Confirm Form Submitted
-        print("Form submitted!")
+        print("Form was submitted!")
 
         # Go to the info confirmation screen
         application.show_screen(screen_dagg_input_confirmation)
 
-    button_end_form_submit = ngb.WidgetBuilder(
+    button_end_form_submit = gb.WidgetBuilder(
         child_container_form_end,
         tk.Button,
         text="Submit",
@@ -666,7 +473,7 @@ def build_screen_dagg_input_confirmation():
         )
     )
 
-    child_container_message = ngb.ChildContainer(
+    child_container_message = gb.ChildContainer(
         screen_dagg_input_confirmation
     )
 
@@ -674,7 +481,7 @@ def build_screen_dagg_input_confirmation():
 
     text_instructions = "Please review your configuration settings below."
 
-    label_instructions = ngb.WidgetBuilder(
+    label_instructions = gb.WidgetBuilder(
         child_container_message,
         tk.Label,
         text=text_instructions,
@@ -686,7 +493,7 @@ def build_screen_dagg_input_confirmation():
     )
 
     # Build the Label form input values widget
-    label_form_input_values = ngb.WidgetBuilder(
+    label_form_input_values = gb.WidgetBuilder(
         child_container_message,
         tk.Label,
         # text=text_instructions + text_config_settings
@@ -698,7 +505,7 @@ def build_screen_dagg_input_confirmation():
         label_form_input_values
     )
 
-    child_container_confirm_button = ngb.ChildContainer(
+    child_container_confirm_button = gb.ChildContainer(
         screen_dagg_input_confirmation
     )
 
@@ -709,22 +516,18 @@ def build_screen_dagg_input_confirmation():
 
     def confirm():
         # Import config settings
-        config.import_config_settings(input_form_ui.config_file_path_str)
+        new_config.config = input_form_ui.config_file_path_str
 
         # Configure settings
-        config.config_settings()
+        new_config.config_settings()
 
-        print(input_form_ui.input_dir_path_str)
-
-        # Get Files
-        data_files.set_root_path(
-            input_form_ui.input_dir_path_str,
-            f"{config.report_name}.{config.report_ext}"
-        )
+        # Get the config data
+        data_importer.config = new_config
+        data_importer.root_path = input_form_ui.input_dir_path_str
+        data_importer.config_import_settings()
 
         # Set global int var to total number of files
-        global_int_var.set(data_files.file_count)
-        # global_int_var.set(265)
+        global_int_var.set(data_importer.file_count)
         global_string_var.set(f"0 out of {global_int_var.get()} files uploaded...")
 
         application.update_idletasks()
@@ -732,7 +535,7 @@ def build_screen_dagg_input_confirmation():
         # Show the Data Import screen
         application.show_screen(screen_data_import)
 
-    button_confirm = ngb.WidgetBuilder(
+    button_confirm = gb.WidgetBuilder(
         child_container_confirm_button,
         tk.Button,
         text="Confirm",
@@ -757,13 +560,13 @@ def build_screen_data_import():
         )
     )
 
-    child_container_loading_status = ngb.ChildContainer(
+    child_container_loading_status = gb.ChildContainer(
         screen_data_import
     )
 
     child_container_loading_status.config_column(0, weight=1)
 
-    label_loading_status = ngb.WidgetBuilder(
+    label_loading_status = gb.WidgetBuilder(
         child_container_loading_status,
         tk.Label,
         textvariable=global_string_var
@@ -775,10 +578,9 @@ def build_screen_data_import():
 
     child_container_loading_status.set_pack_options(fill=tk.X)
 
-    progress_bar_upload = ngb.WidgetBuilder(
+    progress_bar_upload = gb.WidgetBuilder(
         child_container_loading_status,
         ttk.Progressbar,
-        # variable=global_int_var.get(),
         mode='determinate',
         orient=tk.HORIZONTAL
     )
@@ -788,7 +590,7 @@ def build_screen_data_import():
     child_container_loading_status.new_build_row(progress_bar_upload)
 
     # Action Buttons
-    child_container_action_buttons = ngb.ChildContainer(
+    child_container_action_buttons = gb.ChildContainer(
         screen_data_import
     )
 
@@ -800,12 +602,12 @@ def build_screen_data_import():
     )
 
     # Download Buttons
-    button_download = ngb.WidgetBuilder(
+    button_download = gb.WidgetBuilder(
         child_container_action_buttons,
         tk.Button,
         text="Download File",
-        state=tk.DISABLED,
-        command=lambda: save_file()
+        state=tk.DISABLED
+        # command=lambda: save_file()
     )
 
     button_download.set_placement_settings(
@@ -815,25 +617,40 @@ def build_screen_data_import():
     def progress_update(file_num):
         # Set the progress value equal to the file number processed
         progress_bar_upload.widget_object['value'] += 1
-        print(progress_bar_upload.widget_object['maximum'])
         global_string_var.set(f"{file_num} out of {global_int_var.get()} files uploaded...")
 
         application.update_idletasks()
-        # application.update()
 
-    # progress_bar_upload.widget_object['value'] = 0
+    def upload():
+        data_importer.aggregate_data(
+            status_message_func=progress_update,
+            download_button=button_download.widget_object,
+            progress_bar=progress_bar_upload.widget_object
+        )
+
+        button_download.widget_object["command"] = lambda: download()
+
+    def download():
+        export_data_full_file_name = fd.asksaveasfilename(
+            defaultextension='.xlsx',
+            filetypes=(
+                ("Excel files", "*.xlsx"),
+                ("CSV Files", "*.csv")
+            )
+        )
+
+        # Create the data exporter object
+        exporter = du.DataExporter(data_importer.agg_data_df, export_data_full_file_name)
+
+        # Export data
+        exporter.export()
 
     # Create Upload Button
-    button_upload = ngb.WidgetBuilder(
+    button_upload = gb.WidgetBuilder(
         child_container_action_buttons,
         tk.Button,
         text="Upload Data",
-        command=lambda: stub_file_upload_progress(
-            global_int_var.get(),
-            progress_update,
-            button_download.widget_object,
-            progress_bar_upload.widget_object
-        )
+        command=lambda: upload()
     )
 
     button_upload.set_placement_settings(
@@ -858,7 +675,7 @@ def build_screen_config_file_builder():
     )
 
     # Create "Coming Soon" child container
-    child_container_coming_soon = ngb.OldChildContainer(screen_config_file_builder)
+    child_container_coming_soon = gb.OldChildContainer(screen_config_file_builder)
 
     label_coming_soon = tk.Label(
         child_container_coming_soon,
@@ -877,9 +694,7 @@ def build_screens():
     Build all screens
     :return: None
     """
-    # build_screen_start()
     new_build_screen_start()
-    # build_screen_dagg_config_form()
     new_build_screen_dagg_config_form()
     build_screen_dagg_input_confirmation()
     build_screen_data_import()
@@ -890,16 +705,11 @@ def build_screens():
 ########################################################################################################################
 #                                                   MAIN FUNCTION                                                      #
 # -------------------------------------------------------------------------------------------------------------------- #
-def main_0():
-    build_screens()
+build_screens()
+
+if __name__ == "__main__":
     application.initialize()
 
-
-########################################################################################################################
-#                                                   RUN APPLICATION                                                    #
-# -------------------------------------------------------------------------------------------------------------------- #
-if __name__ == '__main__':
-    main_0()
 
 ########################################################################################################################
 #                                                       END FILE                                                       #

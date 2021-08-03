@@ -2,7 +2,7 @@
 #
 #   PROGRAM:            Rob's Data Grabber
 #   FILE:               test_data_agg_ui.py
-#   FILE PURPOSE:       Test classes and functions from data_agg_ui.py
+#   FILE PURPOSE:       Test classes and functions from old_data_agg_ui.py
 #   Author:             Erin Bryson
 #   DATE LAST MODIFIED: 6/7/2021
 #
@@ -10,7 +10,7 @@
 
 # IMPORTS
 import unittest as ut
-from support.data_agg_ui import DAggUserInterface as DaUI
+from support.old_data_agg_ui import DAggUserInterface as DaUI
 
 
 class TestDAaggUserInterface(ut.TestCase):
