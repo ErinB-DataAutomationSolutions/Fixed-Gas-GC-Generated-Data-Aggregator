@@ -62,6 +62,9 @@ class Config:
         for key in self.config["data_sheets"].keys():
             self.datasheets_names.append(key)
 
+    def reset(self):
+        self.__init__()
+
 
 class DataSheet:
     def __init__(self, name: str, sheet_dict: dict):
@@ -276,6 +279,9 @@ class DataImporter:
         self.agg_data_df = re_index_df(self.agg_data_df)
 
         download_button['state'] = 'active'
+
+    def reset(self):
+        self.__init__()
 
 
 class DataExporter:

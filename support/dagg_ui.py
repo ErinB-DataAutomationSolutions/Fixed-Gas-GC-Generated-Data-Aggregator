@@ -2,6 +2,7 @@
 #                                                   Imports                                                            #
 # -------------------------------------------------------------------------------------------------------------------- #
 
+import os
 import tkinter as tk
 from typing import Callable
 import support.gui_builder as gb
@@ -129,7 +130,7 @@ global_string_var.set("")
 global_int_var = tk.IntVar()
 
 # Create Config Object
-new_config = du.Config()
+config = du.Config()
 
 # Create Data Importer object
 data_importer = du.DataImporter()
@@ -516,13 +517,13 @@ def build_screen_dagg_input_confirmation():
 
     def confirm():
         # Import config settings
-        new_config.config = input_form_ui.config_file_path_str
+        config.config = input_form_ui.config_file_path_str
 
         # Configure settings
-        new_config.config_settings()
+        config.config_settings()
 
         # Get the config data
-        data_importer.config = new_config
+        data_importer.config = config
         data_importer.root_path = input_form_ui.input_dir_path_str
         data_importer.config_import_settings()
 
@@ -644,6 +645,26 @@ def build_screen_data_import():
 
         # Export data
         exporter.export()
+
+        # Clean up importer and exporter values
+        # data_importer.reset()
+        data_importer.reset()
+
+        # config.reset()
+        config.reset()
+
+        del exporter
+
+        # Open the generated file
+        os.startfile(export_data_full_file_name)
+
+        # Raise the Start Screen
+        application.show_screen(screen_start)
+
+        progress_bar_upload.widget_object['value'] = 0
+
+        # Update Application
+        application.update_idletasks()
 
     # Create Upload Button
     button_upload = gb.WidgetBuilder(
