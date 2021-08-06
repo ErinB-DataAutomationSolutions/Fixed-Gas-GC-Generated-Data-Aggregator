@@ -44,23 +44,6 @@ def get_dir_path() -> fd.askdirectory:
     return fd.askdirectory()
 
 
-def save_file(export_df):
-    # Prompt user to set full file name
-    export_data_full_file_name = fd.asksaveasfilename(
-        defaultextension='.xlsx',
-        filetypes=(
-            ("Excel files", "*.xlsx"),
-            ("CSV Files", "*.csv")
-        )
-    )
-
-    # Create a data exporter object with the export_df and acquired full file name
-    data_exporter = du.DataExporter(export_df, export_data_full_file_name)
-
-    # Export data
-    data_exporter.export()
-
-
 ########################################################################################################################
 #                                                       CLASSES                                                        #
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -162,7 +145,7 @@ screen_help = gb.ScreenContainer(application)
 # -------------------------------------------------------------------------------------------------------------------- #
 #                                                    Build Screens                                                     #
 # -------------------------------------------------------------------------------------------------------------------- #
-def new_build_screen_start():
+def new_build_screen_start() -> None:
     # Build title label
     screen_start.build_title_label(
         text="Fixed Gas GC Data Aggregator",
@@ -226,7 +209,7 @@ def new_build_screen_start():
     child_container_start_menu.new_build_row(button_quit)
 
 
-def build_screen_help():
+def build_screen_help() -> None:
     screen_help.build_title_label(
         text="Help",
         font=(
@@ -291,7 +274,7 @@ def build_screen_help():
     screen_help.build_back_button(screen_start)
 
 
-def new_build_screen_dagg_config_form():
+def new_build_screen_dagg_config_form() -> None:
     # Build the Screen Title
     screen_dagg_config_form.build_title_label(
         text="Data Aggregator: Configuration Settings",
@@ -391,7 +374,7 @@ def new_build_screen_dagg_config_form():
     )
 
     # Button: Clear
-    def clear():
+    def clear() -> None:
         # Clear stored UI values:
         input_form_ui.config_file_path_str = None
         input_form_ui.input_dir_path_str = None
@@ -412,7 +395,7 @@ def new_build_screen_dagg_config_form():
     button_end_form_clear.set_placement_settings(padx=5)
 
     # Button: Submit
-    def submit():
+    def submit() -> None:
         # Reset UI error values:
         input_form_ui.config_file_path_input_error = False
         input_form_ui.input_dir_input_error = False
@@ -465,7 +448,7 @@ def new_build_screen_dagg_config_form():
     screen_dagg_config_form.build_back_button(screen_start)
 
 
-def build_screen_dagg_input_confirmation():
+def build_screen_dagg_input_confirmation() -> None:
     screen_dagg_input_confirmation.build_title_label(
         text="Input Confirmation",
         font=(
@@ -516,7 +499,7 @@ def build_screen_dagg_input_confirmation():
         padx=5
     )
 
-    def confirm():
+    def confirm() -> None:
         # Import config settings
         config.config = input_form_ui.config_file_path_str
 
@@ -551,7 +534,7 @@ def build_screen_dagg_input_confirmation():
     screen_dagg_input_confirmation.build_back_button(screen_dagg_config_form)
 
 
-def build_screen_data_import():
+def build_screen_data_import() -> None:
     # Build Title Label
     screen_data_import.build_title_label(
         text="Importing Data",
@@ -616,14 +599,14 @@ def build_screen_data_import():
         padx=5
     )
 
-    def progress_update(file_num):
+    def progress_update(file_num) -> None:
         # Set the progress value equal to the file number processed
         progress_bar_upload.widget_object['value'] += 1
         global_string_var.set(f"{file_num} out of {global_int_var.get()} files uploaded...")
 
         application.update_idletasks()
 
-    def upload():
+    def upload() -> None:
         # Dedicate thread to uploading data
         thread_upload = threading.Thread(
             target=data_importer.aggregate_data(
@@ -638,7 +621,7 @@ def build_screen_data_import():
 
         # button_download.widget_object["command"] = lambda: download()
 
-    def download():
+    def download() -> None:
         export_data_full_file_name = fd.asksaveasfilename(
             defaultextension='.xlsx',
             filetypes=(
@@ -691,7 +674,7 @@ def build_screen_data_import():
     )
 
 
-def build_screen_config_file_builder():
+def build_screen_config_file_builder() -> None:
     # Build Title label
     screen_config_file_builder.build_title_label(
         text="Config File Builder",
@@ -717,7 +700,7 @@ def build_screen_config_file_builder():
     screen_config_file_builder.build_back_button(screen_start)
 
 
-def build_screens():
+def build_screens() -> None:
     """
     Build all screens
     :return: None
