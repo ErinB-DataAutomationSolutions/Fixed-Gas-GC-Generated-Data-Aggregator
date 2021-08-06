@@ -10,6 +10,7 @@ from tkinter import filedialog as fd
 from tkinter import messagebox
 from tkinter import ttk
 import support.data_upload as du
+import threading
 
 
 ########################################################################################################################
@@ -607,8 +608,8 @@ def build_screen_data_import():
         child_container_action_buttons,
         tk.Button,
         text="Download File",
-        state=tk.DISABLED
-        # command=lambda: save_file()
+        state=tk.DISABLED,
+        command=lambda: download()
     )
 
     button_download.set_placement_settings(
@@ -623,13 +624,19 @@ def build_screen_data_import():
         application.update_idletasks()
 
     def upload():
-        data_importer.aggregate_data(
-            status_message_func=progress_update,
-            download_button=button_download.widget_object,
-            progress_bar=progress_bar_upload.widget_object
+        # Dedicate thread to uploading data
+        thread_upload = threading.Thread(
+            target=data_importer.aggregate_data(
+                status_message_func=progress_update,
+                download_button=button_download.widget_object,
+                progress_bar=progress_bar_upload.widget_object
+            )
         )
 
-        button_download.widget_object["command"] = lambda: download()
+        # Start new thread
+        thread_upload.start()
+
+        # button_download.widget_object["command"] = lambda: download()
 
     def download():
         export_data_full_file_name = fd.asksaveasfilename(
