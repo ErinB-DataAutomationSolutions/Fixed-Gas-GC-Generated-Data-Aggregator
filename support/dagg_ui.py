@@ -127,10 +127,10 @@ data_importer = du.DataImporter()
 screen_start = gb.ScreenContainer(application, True)
 
 # Data Aggregator Config Form Screen
-screen_dagg_config_form = gb.ScreenContainer(application)
+screen_data_agg_config_form = gb.ScreenContainer(application)
 
 # Data Aggregator Confirmation Screen
-screen_dagg_input_confirmation = gb.ScreenContainer(application)
+screen_data_agg_input_confirmation = gb.ScreenContainer(application)
 
 # Data Aggregator Importing Loading Screen
 screen_data_import = gb.ScreenContainer(application)
@@ -161,16 +161,16 @@ def new_build_screen_start() -> None:
     )
 
     # Button for Data Aggregator Config Form
-    button_screen_dagg_config_form = gb.WidgetBuilder(
+    button_screen_data_agg_config_form = gb.WidgetBuilder(
         child_container_start_menu,
         tk.Button,
         text="Aggregate Data",
-        command=lambda: application.show_screen(screen_dagg_config_form)
+        command=lambda: application.show_screen(screen_data_agg_config_form)
     )
 
-    button_screen_dagg_config_form.set_placement_settings(sticky="ew", pady=1)
+    button_screen_data_agg_config_form.set_placement_settings(sticky="ew", pady=1)
 
-    child_container_start_menu.new_build_row(button_screen_dagg_config_form)
+    child_container_start_menu.new_build_row(button_screen_data_agg_config_form)
 
     # Button for Config File Builder
     button_screen_config_file_builder = gb.WidgetBuilder(
@@ -274,9 +274,9 @@ def build_screen_help() -> None:
     screen_help.build_back_button(screen_start)
 
 
-def new_build_screen_dagg_config_form() -> None:
+def new_build_screen_data_agg_config_form() -> None:
     # Build the Screen Title
-    screen_dagg_config_form.build_title_label(
+    screen_data_agg_config_form.build_title_label(
         text="Data Aggregator: Configuration Settings",
         font=(
             'arial',
@@ -287,7 +287,7 @@ def new_build_screen_dagg_config_form() -> None:
 
     # CHILD CONTAINER 1: FORM ENTRY
     # Create a child container for the Form entry
-    child_container_form_input = gb.ChildContainer(screen_dagg_config_form)
+    child_container_form_input = gb.ChildContainer(screen_data_agg_config_form)
     child_container_form_input.set_pack_options(fill=tk.X)
 
     # Column configure
@@ -365,7 +365,7 @@ def new_build_screen_dagg_config_form() -> None:
 
     # CHILD CONTAINER 2: END FORM
     child_container_form_end = gb.ChildContainer(
-        screen_dagg_config_form
+        screen_data_agg_config_form
     )
 
     child_container_form_end.set_pack_options(
@@ -427,7 +427,7 @@ def new_build_screen_dagg_config_form() -> None:
         print("Form was submitted!")
 
         # Go to the info confirmation screen
-        application.show_screen(screen_dagg_input_confirmation)
+        application.show_screen(screen_data_agg_input_confirmation)
 
     button_end_form_submit = gb.WidgetBuilder(
         child_container_form_end,
@@ -445,11 +445,11 @@ def new_build_screen_dagg_config_form() -> None:
     )
 
     # BACK BUTTON
-    screen_dagg_config_form.build_back_button(screen_start)
+    screen_data_agg_config_form.build_back_button(screen_start)
 
 
-def build_screen_dagg_input_confirmation() -> None:
-    screen_dagg_input_confirmation.build_title_label(
+def build_screen_data_agg_input_confirmation() -> None:
+    screen_data_agg_input_confirmation.build_title_label(
         text="Input Confirmation",
         font=(
             'arial',
@@ -459,7 +459,7 @@ def build_screen_dagg_input_confirmation() -> None:
     )
 
     child_container_message = gb.ChildContainer(
-        screen_dagg_input_confirmation
+        screen_data_agg_input_confirmation
     )
 
     child_container_message.set_pack_options(fill=tk.X)
@@ -491,7 +491,7 @@ def build_screen_dagg_input_confirmation() -> None:
     )
 
     child_container_confirm_button = gb.ChildContainer(
-        screen_dagg_input_confirmation
+        screen_data_agg_input_confirmation
     )
 
     child_container_confirm_button.set_pack_options(
@@ -531,7 +531,7 @@ def build_screen_dagg_input_confirmation() -> None:
         button_confirm
     )
 
-    screen_dagg_input_confirmation.build_back_button(screen_dagg_config_form)
+    screen_data_agg_input_confirmation.build_back_button(screen_data_agg_config_form)
 
 
 def build_screen_data_import() -> None:
@@ -706,8 +706,8 @@ def build_screens() -> None:
     :return: None
     """
     new_build_screen_start()
-    new_build_screen_dagg_config_form()
-    build_screen_dagg_input_confirmation()
+    new_build_screen_data_agg_config_form()
+    build_screen_data_agg_input_confirmation()
     build_screen_data_import()
     build_screen_config_file_builder()
     build_screen_help()
