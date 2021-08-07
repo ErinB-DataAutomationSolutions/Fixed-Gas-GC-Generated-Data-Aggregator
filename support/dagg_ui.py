@@ -241,7 +241,7 @@ def build_screen_help() -> None:
 
     label_data_aggregator = tk.Label(
         labelframe_data_aggregator.widget_object,
-        text="Data Aggregator Help",
+        text="Coming Soon!",
         justify=tk.LEFT
     )
 
@@ -257,7 +257,7 @@ def build_screen_help() -> None:
 
     label_config_file_builder = tk.Label(
         labelframe_config_file_builder.widget_object,
-        text="Config File Builder Help",
+        text="Coming Soon!",
         justify=tk.LEFT
     )
 

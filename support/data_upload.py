@@ -264,6 +264,7 @@ class DataImporter:
             progress_bar['maximum'] = self.file_count
 
         for data_file_path in self.import_file_path_list:
+
             # Concat datasheet data
             self.concat_import_data(data_file_path)
 
