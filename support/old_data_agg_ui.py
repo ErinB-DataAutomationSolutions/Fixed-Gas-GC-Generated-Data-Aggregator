@@ -6,7 +6,7 @@ from tkinter import filedialog, messagebox as mb
 import os
 import easygui
 # from PIL import Image, ImageTk
-from support.data_upload import Config, create_sheet_obj_list, create_export_obj, create_export_df, get_exp_col_list
+from support.old_data_upload import Config, create_sheet_obj_list, create_export_obj, create_export_df, get_exp_col_list
 import glob
 
 

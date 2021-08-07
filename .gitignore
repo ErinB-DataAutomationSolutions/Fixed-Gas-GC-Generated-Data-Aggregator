@@ -6,3 +6,5 @@ support/__pycache__/
 error_logs
 sandbox.py
 pandas_import_tutorial.py
+support/test_config.json
+config_files/generated/
