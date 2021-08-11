@@ -685,16 +685,64 @@ def build_screen_config_file_builder() -> None:
         )
     )
 
-    # Create "Coming Soon" child container
-    child_container_coming_soon = gb.OldChildContainer(screen_config_file_builder)
-
-    label_coming_soon = tk.Label(
-        child_container_coming_soon,
-        text="Coming soon!",
-        fg="red"
+    # SECTION 1: REPORT FILE
+    # Child Container
+    child_container_report_file = gb.ChildContainer(
+        screen_config_file_builder
     )
 
-    child_container_coming_soon.add_elements(label_coming_soon)
+    child_container_report_file.set_pack_options(
+        fill=tk.X,
+        padx=5,
+        pady=5
+    )
+
+    # Label: Report File Name
+    label_report_name = gb.WidgetBuilder(
+        child_container_report_file,
+        tk.Label,
+        text="Report File:"
+    )
+
+    # Entry: Report File Name
+    entry_report_name = gb.WidgetBuilder(
+        child_container_report_file,
+        tk.Entry
+    )
+
+    entry_report_name.set_placement_settings(padx=1)
+
+    # Label: Report File Ext
+    label_report_ext = gb.WidgetBuilder(
+        child_container_report_file,
+        tk.Label,
+        text="."
+    )
+
+    label_report_ext.set_placement_settings(padx=1)
+
+    # ComboBox: Report File Ext
+    combobox_report_ext = gb.WidgetBuilder(
+        child_container_report_file,
+        ttk.Combobox,
+        values=(
+            "xls",
+            "xlsx",
+            "csv"
+        ),
+        width=4,
+        state='readonly'
+    )
+
+    combobox_report_ext.set_placement_settings(padx=1)
+
+    # Build Report Name and Extension Row
+    child_container_report_file.new_build_row(
+        label_report_name,
+        entry_report_name,
+        label_report_ext,
+        combobox_report_ext
+    )
 
     # Build Back button
     screen_config_file_builder.build_back_button(screen_start)
