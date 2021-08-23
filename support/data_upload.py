@@ -73,7 +73,9 @@ class DataSheet:
 
     @property
     def header_bool(self):
-        if self.sheet_dict["headers_bool"] == 1:
+        bool_val = self.sheet_dict["headers_bool"]
+
+        if bool_val:
             return True
         return False
 

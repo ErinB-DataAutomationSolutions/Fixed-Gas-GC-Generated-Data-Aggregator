@@ -111,6 +111,10 @@ class ChildContainer(tk.Frame):
         self.columnconfigure(column_num, cnf=options)
         self.master.columnconfigure(column_num, cnf=options)
 
+    @staticmethod
+    def pack_widget(widget_builder: "WidgetBuilder"):
+        widget_builder.widget_object.pack(cnf=widget_builder.placement_settings)
+
 
 class OldChildContainer(tk.PanedWindow):
     # Track number of child containers that have been created
@@ -195,22 +199,28 @@ class ScreenContainer(tk.Frame):
         self.child_containers.pop(child_container.id)
         print(f"Child Container {child_container.id} removed!")
 
-    def build_back_button(self, parent_screen):
+    def build_back_button(self, parent_screen: "ScreenContainer", pre_screen_func=None):
         self.back_button = tk.Button(
             self,
             text="Back",
-            command=lambda: self.handler.show_screen(parent_screen)
+            command=lambda: self.back(
+                parent_screen=parent_screen,
+                pre_screen_func=pre_screen_func
+            )
         )
 
     def remove_back_button(self):
         if self.back_button:
             self.back_button = None
 
-    def build_next_button(self, next_screen):
+    def build_next_button(self, next_screen: "ScreenContainer", pre_screen_func=None):
         self.next_button = tk.Button(
             self,
             text="Next",
-            command=lambda: self.handler.show_screen(next_screen)
+            command=lambda: self.next(
+                next_screen=next_screen,
+                pre_screen_func=pre_screen_func
+            )
         )
 
     def remove_next_button(self):
@@ -245,6 +255,28 @@ class ScreenContainer(tk.Frame):
                 side=tk.RIGHT,
                 padx=5
             )
+
+    def back(self, parent_screen: "ScreenContainer", pre_screen_func=None):
+        # IF a function is passed, execute:
+        if pre_screen_func:
+            pre_screen_func()
+
+        # Go to previous screen
+        self.handler.show_screen(parent_screen)
+
+        # Update application
+        self.master.update_idletasks()
+
+    def next(self, next_screen: "ScreenContainer", pre_screen_func=None):
+        # IF a function is passed, execute:
+        if pre_screen_func:
+            pre_screen_func()
+
+        # Go to previous screen
+        self.handler.show_screen(next_screen)
+
+        # Update application
+        self.master.update_idletasks()
 
 
 class OldApplication(tk.Tk):
