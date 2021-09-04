@@ -571,13 +571,16 @@ class DatasheetGUI(DatasheetUI):
         self.config_file_gui.app.update_idletasks()
 
     def delete(self):
-        # Destroy the frame
-        self.frame_tab.destroy()
+        continue_bool = messagebox.askyesno("Remove Datasheet", "Are you sure you want to remove this datasheet?")
 
-        # Delete self
-        self.config_file_gui.remove_datasheet_gui(self)
+        if continue_bool:
+            # Destroy the frame
+            self.frame_tab.destroy()
 
-        del self
+            # Delete self
+            self.config_file_gui.remove_datasheet_gui(self)
+
+            del self
 
     def submit(self):
         # Set the entry name
@@ -859,6 +862,7 @@ class ConfigFileBuilderGUI(ConfigFileBuilderUI):
         :param datasheet_gui: DatasheetGUI Object
         :return: None
         """
+
         # Remove Datasheet object from Datasheets
         self.datasheets_gui_list.pop(
             self.datasheets_gui_list.index(datasheet_gui)
