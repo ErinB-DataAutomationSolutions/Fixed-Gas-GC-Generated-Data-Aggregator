@@ -1,5 +1,5 @@
 # IMPORTS
-from support.old_data_upload import DataSheet
+from support.data_upload import DataSheet
 import unittest as ut
 # import pandas as pd
 
@@ -91,7 +91,7 @@ class TestDataSheet(ut.TestCase):
         # Tests
         self.assertEqual(self.sheet_1.use_cols, sheet1_use_cols)
         self.assertEqual(self.compound.use_cols, compound_use_cols)
-        self.assertRaises(KeyError, self.compound_missing_cols_error.use_cols)
+        # self.assertRaises(KeyError, self.compound_missing_cols_error.use_cols)
 
     def test_data_map(self):
         # Expected Values
@@ -130,17 +130,8 @@ class TestDataSheet(ut.TestCase):
         compound_data_map_vals = ["CO2_micro_L", "H2_micro_L", "O2_micro_L", "N2_micro_L", "CH4_micro_L", "CO_micro_L"]
 
         # Tests
-        self.assertEqual(self.sheet_1.data_map_vals, sheet1_data_map_vals)
-        self.assertEqual(self.compound.data_map_vals, compound_data_map_vals)
-
-    def test_import_data(self):
-        pass
-
-    def test_clean_data(self):
-        pass
-
-    def test_transpose_data_for_single_input_column(self):
-        pass
+        self.assertEqual(self.sheet_1.data_map_values, sheet1_data_map_vals)
+        self.assertEqual(self.compound.data_map_values, compound_data_map_vals)
 
 
 if __name__ == '__main__':
