@@ -1,14 +1,10 @@
-# robs_data_collector
+# Fixed Gas GC Generated Data Aggregator
 This program will be used to collect, clean, and aggregate sample data obtained through a Fixed Gas GC machine. 
 
-Required Libraries:
-- JSON
-- NumPy
+Required Libraries to be PIP Installed:
 - Pandas
-- openpyxl
 
 JSON config file structure and definitions:
-- <b>Data Dir:</b> Directory housing sample-generated reports
 - <b>Report Name:</b> Data file name
 - <b>Report Ext:</b> Data file extension
 - <b>DataSheets:</b>:

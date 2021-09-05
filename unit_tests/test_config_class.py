@@ -2,18 +2,18 @@
 #
 #   PROGRAM:            Rob's Data Grabber
 #   FILE:               test_config_class.py
-#   FILE PURPOSE:       Run main script of program
+#   FILE PURPOSE:       Test the Config class from support.data_upload
 #   Author:             Erin Bryson
-#   DATE LAST MODIFIED: 6/7/21
+#   DATE LAST MODIFIED: 9/5/21
 #
 #   DESCRIPTION:
-#       This file is used to test the Config class in library file old_data_upload.py
+#       This file is used to test the Config class in library file data_upload.py
 #
 ########################################################################################################################
 
 # IMPORTS
 import unittest as ut
-from support.old_data_upload import Config
+from support.data_upload import Config
 
 # Set Test Variables
 config_file = "../config_files/config_default.json"
@@ -22,17 +22,12 @@ config_file = "../config_files/config_default.json"
 class TestConfig(ut.TestCase):
 
     def setUp(self) -> None:
-        self.config = Config(config_file)
+        self.config = Config()
+        self.config.config = config_file
+        self.config.config_settings()
 
     def tearDown(self) -> None:
         del self.config
-
-    def test_data_dir(self):
-        # Expected Value
-        data_dir = "Data_Directories"
-
-        # Test
-        self.assertEqual(self.config.input_data_dir, data_dir)
 
     def test_report_ext(self):
         # Expected Value
@@ -42,12 +37,13 @@ class TestConfig(ut.TestCase):
         self.assertEqual(self.config.report_ext, report_ext)
 
     def test_is_dict(self):
-        self.assertTrue(type(self.config.input_data_dir), dict)
+        # self.assertTrue(type(self.config.input_data_dir), dict)
+        pass
 
     def test_data_sheet_keys(self):
         expected_value = ["Sheet1", "Compound"]
 
-        self.assertEqual(self.config.data_sheet_names, expected_value)
+        self.assertEqual(self.config.datasheets_names, expected_value)
 
     def test_data_sheets(self):
         # Expected Value
@@ -81,7 +77,7 @@ class TestConfig(ut.TestCase):
         }
 
         # Test
-        self.assertDictEqual(self.config.data_sheets(), data_sheets)
+        self.assertDictEqual(self.config.datasheets_metadata, data_sheets)
 
 
 if __name__ == '__main__':

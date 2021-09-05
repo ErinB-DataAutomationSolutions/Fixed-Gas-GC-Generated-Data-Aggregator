@@ -1,7 +1,4 @@
 ##### Requirements without Version Specifiers ####
 pandas
-easygui
-openpyxl
-xlrd
 
 ##### Requirements with version specifiers #####

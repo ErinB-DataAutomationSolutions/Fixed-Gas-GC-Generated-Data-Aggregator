@@ -4,8 +4,8 @@
   "data_sheets":
   {
     "Sheet1": {
-      "headers_bool": 0,
-      "transpose_bool": 1,
+      "headers_bool": false,
+      "transpose_bool": true,
       "data_map": {
         "AcqMeth": "method_nm",
         "AcqOp": "operator_nm",
@@ -14,12 +14,12 @@
       }
     },
     "Compound": {
-      "headers_bool": 1,
+      "headers_bool": true,
       "headers_nm": [
         "Name",
         "Amount"
       ],
-      "transpose_bool": 1,
+      "transpose_bool": true,
       "data_map": {
         "CARBON DIOXIDE": "CO2_micro_L",
         "HYDROGEN": "H2_micro_L",
