@@ -4,7 +4,7 @@
 #   FILE:               test_config_class.py
 #   FILE PURPOSE:       Test the Config class from support.data_upload
 #   Author:             Erin Bryson
-#   DATE LAST MODIFIED: 6/7/21
+#   DATE LAST MODIFIED: 9/5/21
 #
 #   DESCRIPTION:
 #       This file is used to test the Config class in library file data_upload.py

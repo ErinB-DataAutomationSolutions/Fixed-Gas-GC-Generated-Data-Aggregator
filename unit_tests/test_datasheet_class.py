@@ -1,3 +1,16 @@
+########################################################################################################################
+#
+#   PROGRAM:            Rob's Data Grabber
+#   FILE:               test_config_class.py
+#   FILE PURPOSE:       Test the Datasheet class from support.data_upload
+#   Author:             Erin Bryson
+#   DATE LAST MODIFIED: 9/5/21
+#
+#   DESCRIPTION:
+#       This file is used to test the Config class in library file data_upload.py
+#
+########################################################################################################################
+
 # IMPORTS
 from support.data_upload import DataSheet
 import unittest as ut
@@ -46,10 +59,8 @@ compound_missing_cols_metadata = {
 class TestDataSheet(ut.TestCase):
 
     def setUp(self) -> None:
-        # 'support\\test_REPORT01.xlsx',
         self.sheet_1 = DataSheet('Sheet1', sheet1_metadata)
 
-        # 'support\\test_REPORT01.xlsx',
         self.compound = DataSheet('Compound', compound_metadata)
         self.compound_missing_cols_error = DataSheet('Compound', compound_missing_cols_metadata)
 
